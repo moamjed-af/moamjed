@@ -22,7 +22,7 @@ export default function Navbar() {
     { label: 'Book a Call', href: '#book-call' },
   ]
 
-  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '971501234567'
+  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '971544245800'
 
   return (
     <motion.nav

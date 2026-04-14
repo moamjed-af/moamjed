@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { analytics } from '@/lib/analytics'
 
 export default function Footer() {
-  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '971501234567'
+  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '971544245800'
   const year = new Date().getFullYear()
 
   return (

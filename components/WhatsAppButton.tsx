@@ -7,7 +7,7 @@ import { analytics } from '@/lib/analytics'
 export default function WhatsAppButton() {
   const [visible, setVisible] = useState(false)
   const [showTooltip, setShowTooltip] = useState(false)
-  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '971501234567'
+  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '971544245800'
 
   useEffect(() => {
     const timer = setTimeout(() => setVisible(true), 2000)

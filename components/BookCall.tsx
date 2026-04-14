@@ -8,7 +8,7 @@ export default function BookCall() {
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-100px' })
   const calendlyUrl = process.env.NEXT_PUBLIC_CALENDLY_URL || 'https://calendly.com/mo-amjed/strategy-call'
-  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '971501234567'
+  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '971544245800'
 
   return (
     <section id="book-call" ref={ref} className="relative py-24 bg-surface-alt overflow-hidden">

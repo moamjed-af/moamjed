@@ -32,7 +32,7 @@ export function scoreLead(data: LeadData): LeadScore {
 
 export function getRedirectUrl(score: LeadScore, leadData?: LeadData & { name?: string; goal?: string }): string {
   const calendlyUrl = process.env.NEXT_PUBLIC_CALENDLY_URL || 'https://calendly.com/mo-amjed/strategy-call'
-  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '971501234567'
+  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '971544245800'
 
   const budget = leadData?.budget_range?.replace(/-/g, ' ').replace('k', 'K').replace('m', 'M') || 'N/A'
   const timeline = leadData?.buying_timeline?.replace(/-/g, ' ') || 'N/A'

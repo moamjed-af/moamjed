@@ -20,7 +20,7 @@ function formatAED(n: number) {
 export default function Properties() {
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-100px' })
-  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '971501234567'
+  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '971544245800'
 
   return (
     <section id="properties" ref={ref} className="relative py-24 bg-surface-alt overflow-hidden">

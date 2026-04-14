@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form'
 import { BUDGET_OPTIONS, TIMELINE_OPTIONS } from '@/lib/lead-scoring'
 import { analytics } from '@/lib/analytics'
 
-type LeadForm = { name: string; phone: string; budget_range: string; buying_timeline: string }
+type LeadForm = { name: string; phone: string; email?: string; budget_range: string; buying_timeline: string }
 type Props = {
   prefilledData?: object
   onSuccess?: (score: string, redirectUrl: string) => void
@@ -67,6 +67,16 @@ export default function LeadCapture({ prefilledData, onSuccess, title = 'Get You
               className="w-full bg-surface-alt border border-surface-border focus:border-violet text-ink placeholder-ink-faint rounded-xl px-4 py-3 text-sm outline-none transition-colors duration-200"
             />
             {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-ink-body mb-2">Email Address <span className="text-ink-faint font-normal">(optional — for your report copy)</span></label>
+            <input
+              {...register('email', { pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Enter a valid email' } })}
+              type="email" placeholder="you@example.com"
+              className="w-full bg-surface-alt border border-surface-border focus:border-violet text-ink placeholder-ink-faint rounded-xl px-4 py-3 text-sm outline-none transition-colors duration-200"
+            />
+            {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
           </div>
 
           <div>

@@ -10,7 +10,7 @@ const Hero3DScene = dynamic(() => import('./Hero3DScene'), {
 })
 
 export default function Hero() {
-  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '971501234567'
+  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '971544245800'
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
