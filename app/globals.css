@@ -1,0 +1,205 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── CSS Variables ───────────────────────────────────────────── */
+:root {
+  --brand: #123ba3;
+  --brand-dark: #0d2d8a;
+  --brand-light: #1e4fc4;
+  --violet: #7C3AED;
+  --violet-dark: #5B21B6;
+  --violet-light: #8B5CF6;
+  --surface: #FFFFFF;
+  --surface-alt: #F8F7FF;
+  --surface-border: #E5E7EB;
+  --surface-border-accent: #DDD6FE;
+  --ink: #1E1B4B;
+  --ink-body: #374151;
+  --ink-muted: #6B7280;
+  --hero-bg: #1E0A3C;
+}
+
+/* ── Base ────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: #FFFFFF;
+  color: #374151;
+  font-family: var(--font-inter, system-ui, sans-serif);
+  overflow-x: hidden;
+}
+
+/* ── Custom Scrollbar ────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F8F7FF;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #7C3AED;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #123ba3;
+}
+
+/* ── Range Input Styling ─────────────────────────────────────── */
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+  cursor: pointer;
+}
+
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #123ba3, #7C3AED);
+  border: 3px solid #ffffff;
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.35);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+input[type='range']::-webkit-slider-thumb:hover {
+  box-shadow: 0 4px 14px rgba(124, 58, 237, 0.5);
+  transform: scale(1.1);
+}
+
+input[type='range']::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #123ba3, #7C3AED);
+  border: 3px solid #ffffff;
+  cursor: pointer;
+}
+
+/* ── Select Styling ──────────────────────────────────────────── */
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  padding-right: 40px !important;
+}
+
+/* ── Glass Morphism (for hero overlay) ───────────────────────── */
+.glass {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-light {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(221, 214, 254, 0.6);
+}
+
+/* ── Gradient Text ───────────────────────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, #123ba3, #7C3AED);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Card ─────────────────────────────────────────────────────── */
+.card {
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 1rem;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.06);
+}
+
+.card-accent {
+  background: #FFFFFF;
+  border: 1px solid #DDD6FE;
+  border-radius: 1rem;
+  box-shadow: 0 2px 20px rgba(124, 58, 237, 0.08);
+}
+
+/* ── Shimmer Loading ─────────────────────────────────────────── */
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(241, 238, 255, 0) 0%,
+    rgba(124, 58, 237, 0.08) 50%,
+    rgba(241, 238, 255, 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s linear infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ── Focus styles ────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid #7C3AED;
+  outline-offset: 2px;
+}
+
+/* ── Selection ───────────────────────────────────────────────── */
+::selection {
+  background-color: rgba(124, 58, 237, 0.2);
+  color: #1E1B4B;
+}
+
+/* ── Animations ──────────────────────────────────────────────── */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+/* ── Calendly embed ──────────────────────────────────────────── */
+.calendly-inline-widget {
+  min-width: 320px;
+  height: 500px;
+}
+
+/* ── Three.js Canvas ─────────────────────────────────────────── */
+canvas {
+  display: block;
+}
+
+/* ── Utility ─────────────────────────────────────────────────── */
+.text-balance {
+  text-wrap: balance;
+}
+
+/* ── Section dividers ─────────────────────────────────────────── */
+.section-divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, #DDD6FE, transparent);
+}
