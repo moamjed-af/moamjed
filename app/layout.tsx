@@ -14,8 +14,8 @@ const BASE_URL = 'https://moamjed.com'
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: 'Mo Amjad Real Estate — Dubai Property Investment Specialist',
-    template: '%s | Mo Amjad Real Estate Dubai',
+    default: 'Mo Amjed — Dubai Property Investment Specialist',
+    template: '%s | Mo Amjed',
   },
   description:
     'Mo Amjad is Dubai\'s trusted property investment specialist. Calculate your ROI in 60 seconds, explore high-yield properties, and invest with precision. RERA licensed broker based in DIFC, Dubai.',

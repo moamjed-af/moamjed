@@ -1,13 +1,44 @@
 'use client'
 
-import { useRef, useMemo, useEffect } from 'react'
+import { useRef, useMemo, useEffect, useState } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Stars } from '@react-three/drei'
 import * as THREE from 'three'
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false)
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
+  return isMobile
+}
+
 // ─── Dubai Skyline ──────────────────────────────────────────────────────────
-function DubaiSkyline() {
+function DubaiSkyline({ simplified = false }: { simplified?: boolean }) {
   const buildings = useMemo(() => {
+    if (simplified) {
+      return [
+        ...Array.from({ length: 8 }, (_, i) => ({
+          x: (i - 4) * 2.2 + (Math.random() - 0.5) * 0.8,
+          z: -18 + (Math.random() - 0.5) * 3,
+          height: Math.random() * 6 + 1,
+          width: Math.random() * 0.7 + 0.3,
+          depth: Math.random() * 0.7 + 0.3,
+          glow: Math.random() * 0.25 + 0.05,
+        })),
+        ...Array.from({ length: 6 }, (_, i) => ({
+          x: (i - 3) * 2.8 + (Math.random() - 0.5) * 0.6,
+          z: -11 + (Math.random() - 0.5) * 2,
+          height: Math.random() * 4 + 0.8,
+          width: Math.random() * 0.8 + 0.4,
+          depth: Math.random() * 0.8 + 0.4,
+          glow: Math.random() * 0.2 + 0.04,
+        })),
+      ]
+    }
     return [
       ...Array.from({ length: 18 }, (_, i) => ({
         x: (i - 9) * 2.2 + (Math.random() - 0.5) * 0.8,
@@ -34,7 +65,7 @@ function DubaiSkyline() {
         glow: Math.random() * 0.12 + 0.02,
       })),
     ]
-  }, [])
+  }, [simplified])
 
   return (
     <group position={[0, -4, 0]}>
@@ -64,9 +95,8 @@ function DubaiSkyline() {
 }
 
 // ─── Floating Particles ─────────────────────────────────────────────────────
-function Particles() {
+function Particles({ count = 350 }: { count?: number }) {
   const meshRef = useRef<THREE.InstancedMesh>(null)
-  const count = 350
 
   const data = useMemo(() => Array.from({ length: count }, () => ({
     x: (Math.random() - 0.5) * 40,
@@ -129,20 +159,22 @@ function GlowRing() {
 }
 
 // ─── Mouse Parallax ──────────────────────────────────────────────────────────
-function CameraRig() {
+function CameraRig({ disabled = false }: { disabled?: boolean }) {
   const { camera } = useThree()
   const mouse = useRef({ x: 0, y: 0 })
 
   useEffect(() => {
+    if (disabled) return
     const onMove = (e: MouseEvent) => {
       mouse.current.x = (e.clientX / window.innerWidth - 0.5) * 2
       mouse.current.y = -(e.clientY / window.innerHeight - 0.5) * 2
     }
     window.addEventListener('mousemove', onMove)
     return () => window.removeEventListener('mousemove', onMove)
-  }, [])
+  }, [disabled])
 
   useFrame(() => {
+    if (disabled) return
     camera.position.x += (mouse.current.x * 2.5 - camera.position.x) * 0.025
     camera.position.y += (mouse.current.y * 1.0 + 2 - camera.position.y) * 0.025
     camera.lookAt(0, 0, -10)
@@ -153,10 +185,12 @@ function CameraRig() {
 
 // ─── Export ──────────────────────────────────────────────────────────────────
 export default function Hero3DScene() {
+  const isMobile = useIsMobile()
+
   return (
     <Canvas
       camera={{ position: [0, 2, 14], fov: 60 }}
-      dpr={[1, 1.5]}
+      dpr={isMobile ? [1, 1] : [1, 1.5]}
       gl={{ antialias: false, alpha: false }}
       style={{ background: '#1E0A3C' }}
     >
@@ -165,12 +199,12 @@ export default function Hero3DScene() {
       <pointLight position={[0, 15, -5]} color="#7C3AED" intensity={80} />
       <pointLight position={[-15, 8, 0]} color="#123ba3" intensity={40} />
       <pointLight position={[15, 8, 0]} color="#A78BFA" intensity={35} />
-      <Stars radius={80} depth={60} count={3000} factor={2} saturation={0.6} fade speed={0.4} />
-      <Particles />
-      <DubaiSkyline />
+      <Stars radius={80} depth={60} count={isMobile ? 1000 : 3000} factor={2} saturation={0.6} fade speed={0.4} />
+      <Particles count={isMobile ? 120 : 350} />
+      <DubaiSkyline simplified={isMobile} />
       <GridFloor />
       <GlowRing />
-      <CameraRig />
+      <CameraRig disabled={isMobile} />
     </Canvas>
   )
 }

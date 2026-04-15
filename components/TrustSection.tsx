@@ -52,7 +52,7 @@ export default function TrustSection() {
 
         {/* Testimonial */}
         <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.4, duration: 0.6 }}>
-          <div className="bg-white rounded-2xl border border-surface-border-accent shadow-card-hover p-8 lg:p-12 relative overflow-hidden">
+          <div className="bg-white rounded-2xl border border-surface-border-accent shadow-card-hover p-5 sm:p-8 lg:p-12 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-48 h-48 bg-violet-pale rounded-full translate-x-24 -translate-y-24" />
             <div className="absolute bottom-0 left-0 w-32 h-32 bg-blue-50 rounded-full -translate-x-16 translate-y-16" />
 
@@ -61,7 +61,7 @@ export default function TrustSection() {
                 <div className="flex flex-col lg:flex-row gap-8 items-start">
                   <div className="flex-1">
                     <div className="text-6xl font-serif leading-none mb-4 text-transparent bg-clip-text bg-gradient-brand-violet opacity-30">"</div>
-                    <p className="text-ink text-xl lg:text-2xl font-medium leading-relaxed mb-6">{testimonials[active].text}</p>
+                    <p className="text-ink text-base sm:text-xl lg:text-2xl font-medium leading-relaxed mb-6">{testimonials[active].text}</p>
                     <div className="flex gap-0.5">
                       {Array.from({ length: testimonials[active].rating }).map((_, i) => (
                         <svg key={i} className="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>

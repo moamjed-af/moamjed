@@ -91,6 +91,18 @@ input[type='range']::-moz-range-thumb {
   cursor: pointer;
 }
 
+/* Larger thumb on touch devices for easier interaction */
+@media (pointer: coarse) {
+  input[type='range']::-webkit-slider-thumb {
+    width: 28px;
+    height: 28px;
+  }
+  input[type='range']::-moz-range-thumb {
+    width: 28px;
+    height: 28px;
+  }
+}
+
 /* ── Select Styling ──────────────────────────────────────────── */
 select {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");

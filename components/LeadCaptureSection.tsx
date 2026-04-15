@@ -52,7 +52,7 @@ export default function LeadCaptureSection() {
           </motion.div>
 
           {/* Right */}
-          <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="bg-white rounded-2xl border border-surface-border-accent shadow-card-hover p-8">
+          <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="bg-white rounded-2xl border border-surface-border-accent shadow-card-hover p-5 sm:p-8">
             <LeadCapture onSuccess={handleSuccess} />
           </motion.div>
         </div>

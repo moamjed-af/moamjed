@@ -100,7 +100,7 @@ export default function ROICalculator({ onLeadGate }: { onLeadGate?: (data: ROIR
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="bg-white rounded-2xl border border-surface-border shadow-card p-8"
+            className="bg-white rounded-2xl border border-surface-border shadow-card p-5 sm:p-8"
           >
             <h3 className="text-xl font-bold text-ink mb-8">Property Details</h3>
             <div className="space-y-8">
@@ -118,7 +118,7 @@ export default function ROICalculator({ onLeadGate }: { onLeadGate?: (data: ROIR
                       type="range"
                       min={cfg.min} max={cfg.max} step={cfg.step} value={val}
                       onChange={(e) => setValue(key, parseFloat(e.target.value))}
-                      className="w-full h-2 rounded-full appearance-none cursor-pointer"
+                      className="w-full h-3 rounded-full appearance-none cursor-pointer touch-none"
                       style={{
                         background: `linear-gradient(to right, #7C3AED 0%, #123ba3 ${pct}%, #E5E7EB ${pct}%, #E5E7EB 100%)`,
                       }}
@@ -152,7 +152,7 @@ export default function ROICalculator({ onLeadGate }: { onLeadGate?: (data: ROIR
                     <input
                       type="range" min={2} max={8} step={0.1} value={values.mortgageRate}
                       onChange={(e) => setValue('mortgageRate', parseFloat(e.target.value))}
-                      className="w-full h-2 rounded-full appearance-none cursor-pointer"
+                      className="w-full h-3 rounded-full appearance-none cursor-pointer touch-none"
                       style={{
                         background: `linear-gradient(to right, #7C3AED 0%, #123ba3 ${((values.mortgageRate - 2) / 6) * 100}%, #E5E7EB ${((values.mortgageRate - 2) / 6) * 100}%, #E5E7EB 100%)`,
                       }}
@@ -188,7 +188,7 @@ export default function ROICalculator({ onLeadGate }: { onLeadGate?: (data: ROIR
                 <motion.div
                   key="placeholder"
                   initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                  className="bg-white rounded-2xl border border-surface-border shadow-card p-8 min-h-[500px] flex flex-col items-center justify-center text-center"
+                  className="bg-white rounded-2xl border border-surface-border shadow-card p-5 sm:p-8 min-h-[400px] sm:min-h-[500px] flex flex-col items-center justify-center text-center"
                 >
                   <div className="w-24 h-24 rounded-2xl bg-violet-pale border border-violet/20 flex items-center justify-center mb-6">
                     <svg className="w-12 h-12 text-violet" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -211,7 +211,7 @@ export default function ROICalculator({ onLeadGate }: { onLeadGate?: (data: ROIR
                   key="results"
                   initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
                   transition={{ duration: 0.4 }}
-                  className="bg-white rounded-2xl border border-surface-border shadow-card p-8 space-y-6"
+                  className="bg-white rounded-2xl border border-surface-border shadow-card p-5 sm:p-8 space-y-6"
                 >
                   <div className="flex items-center justify-between">
                     <h3 className="text-xl font-bold text-ink">Your ROI Breakdown</h3>

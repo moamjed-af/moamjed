@@ -22,11 +22,11 @@ export default function Footer() {
                 href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent("Hi Mo, I'm ready to start investing in Dubai real estate. Let's connect.")}`}
                 target="_blank" rel="noopener noreferrer"
                 onClick={() => analytics.whatsappClicked('footer')}
-                className="flex items-center gap-2 px-5 py-2.5 bg-green-500 hover:bg-green-600 text-white rounded-xl font-semibold text-sm transition-colors"
+                className="flex items-center gap-2 px-5 py-3 min-h-[44px] bg-green-500 hover:bg-green-600 text-white rounded-xl font-semibold text-sm transition-colors"
               >
                 <WhatsAppIcon className="w-4 h-4" /> WhatsApp
               </a>
-              <a href="#book-call" className="px-5 py-2.5 bg-gradient-brand-violet text-white rounded-xl font-semibold text-sm transition-all shadow-violet hover:shadow-violet-lg">Book a Call</a>
+              <a href="#book-call" className="px-5 py-3 min-h-[44px] flex items-center bg-gradient-brand-violet text-white rounded-xl font-semibold text-sm transition-all shadow-violet hover:shadow-violet-lg">Book a Call</a>
             </div>
           </div>
         </div>

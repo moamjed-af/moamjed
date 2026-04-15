@@ -118,7 +118,7 @@ export default function LeadCapture({ prefilledData, onSuccess, title = 'Get You
           <div>
             <label className="block text-sm font-medium text-ink-body mb-2">Phone / WhatsApp *</label>
             <div className="flex gap-2">
-              <div className="flex items-center px-3 bg-surface-alt border border-surface-border rounded-xl text-ink-muted text-sm whitespace-nowrap">🇦🇪 +971</div>
+              <div className="flex items-center px-3 py-3 bg-surface-alt border border-surface-border rounded-xl text-ink-muted text-sm whitespace-nowrap flex-shrink-0">🇦🇪 +971</div>
               <input
                 {...register('phone', { required: 'Phone is required', pattern: { value: /^[0-9]{7,12}$/, message: 'Enter a valid number' } })}
                 type="tel" placeholder="50 123 4567"

@@ -104,7 +104,7 @@ export default function Navbar() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className={`md:hidden p-2 transition-colors ${scrolled ? 'text-ink' : 'text-white'}`}
+            className={`md:hidden p-3 min-w-[44px] min-h-[44px] flex items-center justify-center transition-colors ${scrolled ? 'text-ink' : 'text-white'}`}
             aria-label="Toggle menu"
           >
             <div className="w-6 h-5 flex flex-col justify-between">
@@ -131,7 +131,7 @@ export default function Navbar() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setMenuOpen(false)}
-                  className="block text-ink-body hover:text-ink text-base font-medium py-2 border-b border-surface-border"
+                  className="block text-ink-body hover:text-ink text-base font-medium py-3 min-h-[44px] flex items-center border-b border-surface-border"
                 >
                   {link.label}
                 </a>

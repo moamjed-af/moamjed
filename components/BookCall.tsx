@@ -53,7 +53,8 @@ export default function BookCall() {
                 src={`${calendlyUrl}?embed_type=Inline&hide_landing_page_details=1&hide_gdpr_banner=1&background_color=ffffff&text_color=1E1B4B&primary_color=7C3AED`}
                 width="100%" height="500" frameBorder="0"
                 title="Schedule a call with Mo Amjed"
-                className="block"
+                className="block min-h-[400px] sm:min-h-[500px]"
+                style={{ height: '500px' }}
                 onLoad={() => analytics.calendlyOpened()}
               />
             </div>
@@ -66,7 +67,7 @@ export default function BookCall() {
                 href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent("Hi Mo, I'd like to book a strategy call about Dubai property investment.")}`}
                 target="_blank" rel="noopener noreferrer"
                 onClick={() => analytics.whatsappClicked('book_call_section')}
-                className="flex items-center gap-2 px-4 py-2.5 bg-green-500 hover:bg-green-600 text-white rounded-xl font-semibold text-sm transition-colors duration-200 flex-shrink-0"
+                className="flex items-center gap-2 px-4 py-3 min-h-[44px] bg-green-500 hover:bg-green-600 text-white rounded-xl font-semibold text-sm transition-colors duration-200 flex-shrink-0"
               >
                 <WhatsAppIcon className="w-4 h-4" />
                 WhatsApp

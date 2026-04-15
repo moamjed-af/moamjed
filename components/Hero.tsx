@@ -46,7 +46,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.35, duration: 0.7 }}
-          className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black text-white leading-[0.95] tracking-tight mb-6"
+          className="text-4xl sm:text-5xl lg:text-7xl xl:text-8xl font-black text-white leading-[0.95] tracking-tight mb-6"
         >
           Find{' '}
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-soft to-violet-light">
@@ -55,7 +55,7 @@ export default function Hero() {
           <br />
           Dubai Properties
           <br />
-          <span className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white/70">
+          <span className="text-2xl sm:text-4xl lg:text-6xl font-bold text-white/70">
             in 60 Seconds
           </span>
         </motion.h1>
