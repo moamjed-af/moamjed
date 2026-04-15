@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useForm } from 'react-hook-form'
 import { analytics } from '@/lib/analytics'
+import { calculateROI, type ROIResult } from '@/lib/roi-calc'
 
 type CalculatorInputs = {
   propertyPrice: number
@@ -12,18 +13,6 @@ type CalculatorInputs = {
   appreciationPercent: number
   mortgageRate: number
   includeMortgage: boolean
-}
-
-type ROIResult = {
-  grossRentalYield: number
-  netRentalYield: number
-  annualROI: number
-  monthlyNetCashFlow: number
-  annualCashFlow: number
-  totalInvestment: number
-  equityAfter5Years: number
-  totalReturnAfter5Years: number
-  mortgagePayment?: number
 }
 
 function formatAED(n: number) {
@@ -60,19 +49,14 @@ export default function ROICalculator({ onLeadGate }: { onLeadGate?: (data: ROIR
     setLoading(true)
     analytics.calculatorStarted()
     try {
-      const res = await fetch('/api/roi', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          propertyPrice: values.propertyPrice,
-          downPaymentPercent: values.downPaymentPercent,
-          expectedMonthlyRent: values.expectedMonthlyRent,
-          appreciationPercent: values.appreciationPercent,
-          mortgageRate: values.includeMortgage ? values.mortgageRate : 0,
-          mortgageTerm: 25,
-        }),
+      const data = calculateROI({
+        propertyPrice: values.propertyPrice,
+        downPaymentPercent: values.downPaymentPercent,
+        expectedMonthlyRent: values.expectedMonthlyRent,
+        appreciationPercent: values.appreciationPercent,
+        mortgageRate: values.includeMortgage ? values.mortgageRate : 0,
+        mortgageTerm: 25,
       })
-      const data: ROIResult = await res.json()
       setResults(data)
       setStep(2)
       analytics.calculatorCompleted({ propertyPrice: values.propertyPrice, rentalYield: data.grossRentalYield })

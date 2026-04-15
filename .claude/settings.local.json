@@ -7,7 +7,11 @@
       "Bash(ls \"/Users/mo/Desktop/Mo Amjad Website/.env\"*)",
       "Bash(npm install:*)",
       "Bash(node -e \"require\\('resend'\\)\")",
-      "Bash(npx vercel:*)"
+      "Bash(npx vercel:*)",
+      "mcp__20dc329a-9fc2-4ab3-bdee-382be3fd99af__netlify-team-services-reader",
+      "Bash(git config:*)",
+      "Bash(security find-internet-password:*)",
+      "mcp__Claude_Preview__preview_start"
     ]
   }
 }

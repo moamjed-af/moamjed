@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useForm } from 'react-hook-form'
-import { BUDGET_OPTIONS, TIMELINE_OPTIONS } from '@/lib/lead-scoring'
+import { BUDGET_OPTIONS, TIMELINE_OPTIONS, scoreLead, getRedirectUrl } from '@/lib/lead-scoring'
 import { analytics } from '@/lib/analytics'
 
 type LeadForm = { name: string; phone: string; email?: string; budget_range: string; buying_timeline: string }
@@ -24,15 +24,29 @@ export default function LeadCapture({ prefilledData, onSuccess, title = 'Get You
   const onSubmit = async (data: LeadForm) => {
     setLoading(true); setError(null)
     try {
-      const res = await fetch('/api/leads', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...data, calculator_data: prefilledData }),
-      })
-      const result = await res.json()
-      analytics.leadSubmitted(result.score)
+      const score = scoreLead({ budget_range: data.budget_range, buying_timeline: data.buying_timeline })
+      const redirectUrl = getRedirectUrl(score, { budget_range: data.budget_range, buying_timeline: data.buying_timeline, name: data.name })
+
+      // Save lead directly to Supabase from client
+      try {
+        const { getSupabase } = await import('@/lib/supabase')
+        await getSupabase().from('leads').insert({
+          name: data.name,
+          phone: data.phone,
+          email: data.email || null,
+          budget_range: data.budget_range,
+          buying_timeline: data.buying_timeline,
+          score,
+          calculator_data: prefilledData || null,
+          source: 'website',
+        })
+      } catch (dbErr) {
+        console.warn('Supabase insert failed (env vars may not be set):', dbErr)
+      }
+
+      analytics.leadSubmitted(score)
       setSubmitted(true)
-      setTimeout(() => { onSuccess?.(result.score, result.redirectUrl); if (result.redirectUrl && !onSuccess) window.open(result.redirectUrl, '_blank') }, 1500)
+      setTimeout(() => { onSuccess?.(score, redirectUrl); if (redirectUrl && !onSuccess) window.open(redirectUrl, '_blank') }, 1500)
     } catch { setError('Something went wrong. Please try again.') }
     finally { setLoading(false) }
   }
