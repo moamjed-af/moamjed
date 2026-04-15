@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useForm } from 'react-hook-form'
 import { BUDGET_OPTIONS, TIMELINE_OPTIONS, scoreLead, getRedirectUrl } from '@/lib/lead-scoring'
 import { analytics } from '@/lib/analytics'
+import { sendLeadNotification, sendThankYouEmail } from '@/lib/email-client'
 
 type LeadForm = { name: string; phone: string; email?: string; budget_range: string; buying_timeline: string }
 type Props = {
@@ -45,6 +46,27 @@ export default function LeadCapture({ prefilledData, onSuccess, title = 'Get You
       }
 
       analytics.leadSubmitted(score)
+
+      // Send emails (fire and forget — non-blocking)
+      sendLeadNotification({
+        name: data.name,
+        phone: data.phone,
+        email: data.email,
+        budget_range: data.budget_range,
+        buying_timeline: data.buying_timeline,
+        score,
+      }).catch(console.warn)
+
+      if (data.email) {
+        sendThankYouEmail({
+          name: data.name,
+          email: data.email,
+          budget_range: data.budget_range,
+          buying_timeline: data.buying_timeline,
+          score,
+        }).catch(console.warn)
+      }
+
       setSubmitted(true)
       setTimeout(() => { onSuccess?.(score, redirectUrl); if (redirectUrl && !onSuccess) window.open(redirectUrl, '_blank') }, 1500)
     } catch { setError('Something went wrong. Please try again.') }
