@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[881],{6881:function(e,u,n){n.d(u,{getSupabase:function(){return a}});var r=n(3309);let t=null;function a(){if(!t){let e="your_supabase_project_url",u="your_supabase_anon_key";if(!e||!u)throw Error("Supabase env vars not configured");t=(0,r.eI)(e,u)}return t}new Proxy({},{get:(e,u)=>a()[u]})}}]);

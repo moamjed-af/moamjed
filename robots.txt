@@ -1,0 +1,7 @@
+User-Agent: *
+Allow: /
+Disallow: /api/
+Disallow: /_next/
+
+Host: https://moamjed.com
+Sitemap: https://moamjed.com/sitemap.xml
