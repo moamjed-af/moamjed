@@ -54,7 +54,7 @@ export default function Footer() {
               {[
                 { label: 'WhatsApp', href: `https://wa.me/${whatsappNumber}`, icon: <WhatsAppIcon className="w-4 h-4" /> },
                 { label: 'LinkedIn', href: 'https://linkedin.com/in/moamjed', icon: <LinkedInIcon className="w-4 h-4" /> },
-                { label: 'Instagram', href: 'https://instagram.com/moamjed', icon: <InstagramIcon className="w-4 h-4" /> },
+                { label: 'Instagram', href: 'https://www.instagram.com/moamjedre/', icon: <InstagramIcon className="w-4 h-4" /> },
               ].map((s) => (
                 <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label} className="w-9 h-9 rounded-lg border border-white/10 hover:border-violet/50 flex items-center justify-center text-white/40 hover:text-violet-soft transition-all">
                   {s.icon}
