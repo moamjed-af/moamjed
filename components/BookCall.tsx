@@ -23,10 +23,10 @@ export default function BookCall() {
             </div>
             <h2 className="text-4xl sm:text-5xl font-black text-ink mb-6 leading-tight">
               Book Your{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-brand-violet">Free 30-Min</span>{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-brand-violet">Free 15-Min</span>{' '}
               Strategy Call
             </h2>
-            <p className="text-ink-muted text-lg mb-8 leading-relaxed">In 30 minutes, Mo maps out your exact Dubai property investment path — which areas, which developers, and realistic returns for your budget.</p>
+            <p className="text-ink-muted text-lg mb-8 leading-relaxed">In 15 minutes, Mo maps out your exact Dubai property investment path — which areas, which developers, and realistic returns for your budget.</p>
             <div className="space-y-3 mb-8">
               {['Your personal ROI roadmap for Dubai real estate', 'Off-market deals matched to your exact budget', 'Developer payment plan options explained', 'UAE Golden Visa eligibility & residency benefits', 'Tax-free income strategies'].map((item) => (
                 <div key={item} className="flex items-center gap-3">
