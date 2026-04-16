@@ -8,28 +8,30 @@ export const metadata: Metadata = {
 
 export default function DubaiInvestmentGuide() {
   return (
-    <main className="min-h-screen bg-dark py-24">
+    <main className="min-h-screen bg-white py-24">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <Link href="/" className="text-brand hover:text-brand-light text-sm flex items-center gap-2 mb-8 transition-colors">
+        <div className="mb-10">
+          <Link href="/" className="text-violet hover:text-violet/70 text-sm flex items-center gap-2 mb-8 transition-colors font-medium">
             ← Back to Homepage
           </Link>
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-brand/30 bg-brand/10 text-brand text-sm font-medium mb-4">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-violet/20 bg-violet-pale text-violet text-sm font-semibold mb-5">
             📚 Free Investment Guide
           </div>
-          <h1 className="text-4xl sm:text-5xl font-black text-white mb-4">
-            Dubai Property Investment Guide 2025
+          <h1 className="text-4xl sm:text-5xl font-black text-ink mb-4 leading-tight">
+            Dubai Property Investment<br />Guide 2025
           </h1>
-          <p className="text-gray-400 text-lg">
+          <p className="text-ink-muted text-lg leading-relaxed">
             Everything you need to know before investing in Dubai real estate — written by Mo Amjed, Dubai's precision investment specialist.
           </p>
         </div>
 
-        <div className="space-y-10 text-gray-300 leading-relaxed">
+        <div className="space-y-8">
           {sections.map((section) => (
-            <section key={section.title} className="bg-dark-card border border-dark-border rounded-2xl p-8">
-              <h2 className="text-2xl font-bold text-white mb-4">{section.emoji} {section.title}</h2>
-              <div className="space-y-3">
+            <section key={section.title} className="bg-white border border-surface-border rounded-2xl p-7 shadow-card">
+              <h2 className="text-xl font-bold text-ink mb-4 flex items-center gap-2">
+                <span>{section.emoji}</span> {section.title}
+              </h2>
+              <div className="space-y-3 text-ink-muted leading-relaxed">
                 {section.content.map((paragraph, i) => (
                   <p key={i}>{paragraph}</p>
                 ))}
@@ -37,8 +39,8 @@ export default function DubaiInvestmentGuide() {
               {section.list && (
                 <ul className="mt-4 space-y-2">
                   {section.list.map((item) => (
-                    <li key={item} className="flex items-start gap-2">
-                      <span className="text-brand mt-1">→</span>
+                    <li key={item} className="flex items-start gap-2 text-ink-body text-sm">
+                      <span className="text-violet mt-0.5 flex-shrink-0">→</span>
                       <span>{item}</span>
                     </li>
                   ))}
@@ -49,21 +51,24 @@ export default function DubaiInvestmentGuide() {
         </div>
 
         {/* CTA */}
-        <div className="mt-12 bg-gradient-to-br from-brand/20 to-brand-dark/20 border border-brand/30 rounded-2xl p-10 text-center">
-          <h2 className="text-3xl font-black text-white mb-3">Ready to Invest?</h2>
-          <p className="text-gray-400 mb-6">Use our ROI calculator or book a free strategy call with Mo Amjed.</p>
+        <div className="mt-12 bg-gradient-to-br from-violet/10 to-brand/10 border border-violet/20 rounded-2xl p-10 text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-violet/20 bg-white text-violet text-sm font-semibold mb-4">
+            🚀 Ready to Invest?
+          </div>
+          <h2 className="text-3xl font-black text-ink mb-3">Start With Your ROI Calculation</h2>
+          <p className="text-ink-muted mb-8 max-w-md mx-auto">Use our live ROI calculator or book a free strategy call with Mo Amjed to explore your options.</p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               href="/#calculator"
-              className="px-8 py-3 bg-brand hover:bg-brand-light text-white rounded-xl font-semibold transition-colors duration-200"
+              className="px-8 py-3.5 bg-gradient-brand-violet text-white rounded-xl font-semibold text-sm shadow-violet hover:shadow-violet-lg hover:-translate-y-0.5 transition-all duration-200"
             >
               Use ROI Calculator
             </Link>
             <Link
               href="/#book-call"
-              className="px-8 py-3 border border-brand/40 text-brand hover:bg-brand hover:text-white rounded-xl font-semibold transition-colors duration-200"
+              className="px-8 py-3.5 border border-violet/30 text-violet hover:bg-violet-pale rounded-xl font-semibold text-sm transition-all duration-200"
             >
-              Book a Free Call
+              Book a Free Strategy Call
             </Link>
           </div>
         </div>

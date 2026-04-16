@@ -17,7 +17,7 @@ import ExitIntentPopup from '@/components/ExitIntentPopup'
 import CookieBanner from '@/components/CookieBanner'
 import Footer from '@/components/Footer'
 import LeadCapture from '@/components/LeadCapture'
-import type { ROIResult } from './api/roi/route'
+import type { ROIResult } from '@/lib/roi-calc'
 
 export default function HomePage() {
   const [roiData, setRoiData] = useState<ROIResult | null>(null)
