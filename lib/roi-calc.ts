@@ -53,6 +53,17 @@ export type ROIResult = {
   totalInvestment: number         // Down payment + commission (if applicable)
   agencyCommission?: number
   mortgagePayment?: number        // Monthly mortgage P&I
+  mortgageDetails?: {
+    loanAmount: number            // AED borrowed
+    ltvPercent: number            // Loan-to-Value %
+    rate: number                  // Annual interest rate %
+    termYears: number
+    monthlyPayment: number
+    totalRepayable: number        // Total paid over full term
+    totalInterest: number         // Interest portion of total repayable
+    annualInterestCost: number    // First-year interest (approximate)
+    equityFromDay1: number        // Down payment = instant equity
+  }
 
   // ── 5-year projections ─────────────────────────────────────
   equityAfter5Years: number
@@ -148,10 +159,30 @@ export function calculateROI({
 
   // ── Mortgage ────────────────────────────────────────────────────────────────
   let mortgagePayment = 0
+  let mortgageDetails: ROIResult['mortgageDetails'] = undefined
+
   if (loanAmount > 0 && mortgageRate > 0) {
     const r = mortgageRate / 100 / 12
     const n = mortgageTerm * 12
     mortgagePayment = (loanAmount * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1)
+
+    const totalRepayable    = mortgagePayment * n
+    const totalInterest     = totalRepayable - loanAmount
+    // Approximate first-year interest: outstanding balance × annual rate
+    const annualInterestCost = loanAmount * (mortgageRate / 100)
+    const ltvPercent        = (loanAmount / propertyPrice) * 100
+
+    mortgageDetails = {
+      loanAmount:        Math.round(loanAmount),
+      ltvPercent:        +ltvPercent.toFixed(1),
+      rate:              mortgageRate,
+      termYears:         mortgageTerm,
+      monthlyPayment:    Math.round(mortgagePayment),
+      totalRepayable:    Math.round(totalRepayable),
+      totalInterest:     Math.round(totalInterest),
+      annualInterestCost:Math.round(annualInterestCost),
+      equityFromDay1:    Math.round(downPayment),
+    }
   }
   const annualMortgage = mortgagePayment * 12
 
@@ -226,6 +257,7 @@ export function calculateROI({
     totalInvestment:            Math.round(totalInvestment),
     agencyCommission:           agencyCommission > 0 ? Math.round(agencyCommission) : undefined,
     mortgagePayment:            mortgagePayment > 0 ? Math.round(mortgagePayment) : undefined,
+    mortgageDetails,
     equityAfter5Years:          Math.round(equityAfter5Years),
     projectedValueAfter5Years:  Math.round(projectedValueAfter5Years),
     totalCashFlowAfter5Years:   Math.round(totalCashFlowAfter5Years),

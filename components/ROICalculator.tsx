@@ -297,7 +297,28 @@ export default function ROICalculator({ onLeadGate }: { onLeadGate?: (data: ROIR
                     )}
                   </Section>
 
-                  {/* 3. Operating Expenses */}
+                  {/* 3. Mortgage Breakdown */}
+                  {results.mortgageDetails && (
+                    <Section title="Mortgage Breakdown" icon="🏦">
+                      <Metric label="Loan Amount"         value={fAED(results.mortgageDetails.loanAmount)}
+                        sub={`${results.mortgageDetails.ltvPercent}% LTV`} />
+                      <Metric label="Interest Rate"       value={`${results.mortgageDetails.rate}% p.a.`}
+                        sub="Annual rate (fixed as entered)" />
+                      <Metric label="Monthly Payment"     value={fAED(results.mortgageDetails.monthlyPayment)}
+                        sub="Principal & interest (P&I)" accent="text-violet" />
+                      <Metric label="Annual Interest Cost" value={fAED(results.mortgageDetails.annualInterestCost)}
+                        sub="Approximate year 1 interest" />
+                      <Metric label="Total Interest Paid" value={fAED(results.mortgageDetails.totalInterest)}
+                        sub={`Over full ${results.mortgageDetails.termYears}-year term`}
+                        accent="text-amber-600" />
+                      <Metric label="Total Repayable"     value={fAED(results.mortgageDetails.totalRepayable)}
+                        sub="Loan + all interest" />
+                      <Metric label="Equity from Day 1"   value={fAED(results.mortgageDetails.equityFromDay1)}
+                        sub="Your down payment = instant ownership stake" accent="text-green-600" />
+                    </Section>
+                  )}
+
+                  {/* 4. Operating Expenses */}
                   <Section title="Operating Expenses Breakdown" icon="🏗️">
                     <Metric label="Service Charges"    value={fAED(results.operatingExpenses.serviceCharge)} sub="~1.2% of property value / year" />
                     <Metric label="Insurance"          value={fAED(results.operatingExpenses.insurance)}     sub="~0.2% / year" />
