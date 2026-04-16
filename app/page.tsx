@@ -96,7 +96,7 @@ export default function HomePage() {
                 {roiData && (
                   <div className="grid grid-cols-2 gap-3 mb-6 p-4 bg-surface-alt rounded-xl border border-surface-border">
                     <div><div className="text-violet font-black text-xl">{roiData.grossRentalYield}%</div><div className="text-ink-faint text-xs">Gross Yield</div></div>
-                    <div><div className="text-brand font-black text-xl">{roiData.annualROI}%</div><div className="text-ink-faint text-xs">Annual ROI</div></div>
+                    <div><div className="text-brand font-black text-xl">{roiData.irr5Year}%</div><div className="text-ink-faint text-xs">IRR (5-Year)</div></div>
                   </div>
                 )}
                 <LeadCapture compact prefilledData={roiData || undefined} onSuccess={handleLeadSuccess} />
