@@ -6,10 +6,11 @@ import { useForm } from 'react-hook-form'
 import { BUDGET_OPTIONS, TIMELINE_OPTIONS, scoreLead, getRedirectUrl } from '@/lib/lead-scoring'
 import { analytics } from '@/lib/analytics'
 import { sendLeadNotification, sendThankYouEmail } from '@/lib/email-client'
+import type { ROIResult } from '@/lib/roi-calc'
 
 type LeadForm = { name: string; phone: string; email?: string; budget_range: string; buying_timeline: string }
 type Props = {
-  prefilledData?: object
+  prefilledData?: ROIResult
   onSuccess?: (score: string, redirectUrl: string) => void
   title?: string
   subtitle?: string
@@ -55,6 +56,7 @@ export default function LeadCapture({ prefilledData, onSuccess, title = 'Get You
         budget_range: data.budget_range,
         buying_timeline: data.buying_timeline,
         score,
+        roiData: prefilledData || undefined,
       }).catch(console.warn)
 
       if (data.email) {
@@ -64,6 +66,7 @@ export default function LeadCapture({ prefilledData, onSuccess, title = 'Get You
           budget_range: data.budget_range,
           buying_timeline: data.buying_timeline,
           score,
+          roiData: prefilledData || undefined,
         }).catch(console.warn)
       }
 

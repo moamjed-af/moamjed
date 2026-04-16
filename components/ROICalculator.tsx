@@ -9,7 +9,7 @@ import { calculateROI, type ROIResult } from '@/lib/roi-calc'
 type Inputs = {
   propertyPrice: number
   downPaymentPercent: number
-  expectedMonthlyRent: number
+  expectedAnnualRent: number
   appreciationPercent: number
   vacancyRatePercent: number
   mortgageRate: number
@@ -17,6 +17,8 @@ type Inputs = {
   includeMortgage: boolean
   includeCommission: boolean
   includeManagement: boolean
+  includeDLD: boolean
+  propertySizeSqft: number
 }
 
 function fAED(n: number) {
@@ -30,7 +32,7 @@ function fNum(n: number) { return n.toLocaleString() }
 const SLIDERS = [
   { key: 'propertyPrice',       min: 500_000,  max: 20_000_000, step: 100_000, label: 'Property Price',         fmt: fAED },
   { key: 'downPaymentPercent',  min: 20,       max: 80,          step: 5,      label: 'Down Payment',            fmt: (v: number) => `${v}%` },
-  { key: 'expectedMonthlyRent', min: 2_000,    max: 100_000,     step: 500,    label: 'Monthly Rent (gross)',    fmt: fAED },
+  { key: 'expectedAnnualRent',  min: 24_000,   max: 1_200_000,   step: 12_000, label: 'Annual Rent (gross)',      fmt: fAED },
   { key: 'appreciationPercent', min: 0,        max: 15,          step: 0.5,    label: 'Annual Capital Growth',   fmt: (v: number) => `${v}%` },
   { key: 'vacancyRatePercent',  min: 0,        max: 20,          step: 1,      label: 'Vacancy Rate',            fmt: (v: number) => `${v}%` },
 ] as const
@@ -113,7 +115,7 @@ export default function ROICalculator({ onLeadGate }: { onLeadGate?: (data: ROIR
     defaultValues: {
       propertyPrice:       1_500_000,
       downPaymentPercent:  25,
-      expectedMonthlyRent: 8_000,
+      expectedAnnualRent:  96_000,
       appreciationPercent: 5,
       vacancyRatePercent:  5,
       mortgageRate:        4.5,
@@ -121,6 +123,8 @@ export default function ROICalculator({ onLeadGate }: { onLeadGate?: (data: ROIR
       includeMortgage:     true,
       includeCommission:   false,
       includeManagement:   false,
+      includeDLD:          false,
+      propertySizeSqft:    0,
     },
   })
   const v = watch()
@@ -132,13 +136,15 @@ export default function ROICalculator({ onLeadGate }: { onLeadGate?: (data: ROIR
       const data = calculateROI({
         propertyPrice:        v.propertyPrice,
         downPaymentPercent:   v.downPaymentPercent,
-        expectedMonthlyRent:  v.expectedMonthlyRent,
+        expectedMonthlyRent:  v.expectedAnnualRent / 12,
         appreciationPercent:  v.appreciationPercent,
         vacancyRatePercent:   v.vacancyRatePercent,
         managementFeePercent: v.includeManagement ? v.managementFeePercent : 0,
         mortgageRate:         v.includeMortgage ? v.mortgageRate : 0,
         mortgageTerm:         25,
         includeCommission:    v.includeCommission,
+        propertySizeSqft:     v.propertySizeSqft,
+        includeDLD:           v.includeDLD,
       })
       setResults(data)
       analytics.calculatorCompleted({ propertyPrice: v.propertyPrice, rentalYield: data.grossRentalYield })
@@ -178,6 +184,22 @@ export default function ROICalculator({ onLeadGate }: { onLeadGate?: (data: ROIR
                 <Slider key={cfg.key} cfg={cfg} value={v[cfg.key] as number} onChange={val => setValue(cfg.key, val)} />
               ))}
 
+              {/* Property Size */}
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <label className="text-ink-muted text-sm font-medium">Property Size (sq ft)</label>
+                  <span className="text-ink font-bold">{v.propertySizeSqft > 0 ? `${v.propertySizeSqft.toLocaleString()} sq ft` : 'Unknown'}</span>
+                </div>
+                <input
+                  type="number" min={0} max={10000} step={50}
+                  value={v.propertySizeSqft || ''}
+                  placeholder="e.g. 850"
+                  onChange={e => setValue('propertySizeSqft', parseInt(e.target.value) || 0)}
+                  className="w-full border border-surface-border rounded-xl px-4 py-2.5 text-sm text-ink bg-surface-alt outline-none focus:border-violet transition-colors"
+                />
+                <p className="text-xs text-ink-faint mt-1">Used to calculate service charge at AED 14/sqft/yr · Leave blank to use 1.2% of price</p>
+              </div>
+
               <div className="border-t border-surface-border pt-6 space-y-5">
                 {/* Mortgage */}
                 <Toggle label="Mortgage Financing" on={v.includeMortgage} onToggle={() => setValue('includeMortgage', !v.includeMortgage)} />
@@ -199,6 +221,13 @@ export default function ROICalculator({ onLeadGate }: { onLeadGate?: (data: ROIR
                 <div>
                   <Toggle label="Ready Property — 2% Agency Commission" on={v.includeCommission} onToggle={() => setValue('includeCommission', !v.includeCommission)}
                     sub={v.includeCommission ? `Commission: ${fAED(v.propertyPrice * 0.02)} added to investment` : undefined}
+                  />
+                </div>
+
+                {/* DLD Fee */}
+                <div>
+                  <Toggle label="4% DLD Registration Fee" on={v.includeDLD} onToggle={() => setValue('includeDLD', !v.includeDLD)}
+                    sub={v.includeDLD ? `DLD: ${fAED(v.propertyPrice * 0.04)} added to investment` : 'One-time transfer fee — ready properties'}
                   />
                 </div>
 
@@ -376,6 +405,7 @@ export default function ROICalculator({ onLeadGate }: { onLeadGate?: (data: ROIR
                     <p className="text-xs font-bold text-ink mb-2">Your Investment</p>
                     <Metric label="Down Payment" value={fAED((v.propertyPrice * v.downPaymentPercent) / 100)} />
                     {results.agencyCommission && <Metric label="Agency Commission (2%)" value={fAED(results.agencyCommission)} />}
+                    {results.dldFee && <Metric label="DLD Registration Fee (4%)" value={fAED(results.dldFee)} />}
                     <Metric label="Total Cash Required" value={fAED(results.totalInvestment)} accent="text-violet" />
                   </div>
 

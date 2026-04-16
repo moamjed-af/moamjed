@@ -280,7 +280,6 @@ function FloatingStats({ simplified }: { simplified: boolean }) {
             color={c.color}
             anchorX="center"
             anchorY="middle"
-            font="https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiJ-Ek-_EeA.woff2"
           >
             {c.value}
           </Text>
@@ -291,7 +290,6 @@ function FloatingStats({ simplified }: { simplified: boolean }) {
             color="#94A3B8"
             anchorX="center"
             anchorY="middle"
-            font="https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiJ-Ek-_EeA.woff2"
           >
             {c.label}
           </Text>

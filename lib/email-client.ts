@@ -38,6 +38,13 @@ export async function sendLeadNotification(params: {
   budget_range: string
   buying_timeline: string
   score: string
+  roiData?: {
+    grossRentalYield: number
+    netRentalYield: number
+    irr5Year: number
+    monthlyNetCashFlow: number
+    projectedValueAfter5Years: number
+  }
 }) {
   if (!emailConfigured()) return
   const { send } = await import('@emailjs/browser')
@@ -46,15 +53,20 @@ export async function sendLeadNotification(params: {
     SERVICE_ID,
     NOTIFICATION_TEMPLATE_ID,
     {
-      to_email:      NOTIFICATION_EMAIL,
-      to_name:       'Mo',
-      client_name:   params.name,
-      client_phone:  `+971${params.phone.replace(/\D/g, '')}`,
-      client_email:  params.email || 'Not provided',
-      budget:        BUDGET_LABELS[params.budget_range] || params.budget_range,
-      timeline:      TIMELINE_LABELS[params.buying_timeline] || params.buying_timeline,
-      score:         SCORE_LABELS[params.score] || params.score,
-      whatsapp_link: `https://wa.me/971${params.phone.replace(/^0/, '').replace(/\D/g, '')}`,
+      to_email:        NOTIFICATION_EMAIL,
+      to_name:         'Mo',
+      client_name:     params.name,
+      client_phone:    `+971${params.phone.replace(/\D/g, '')}`,
+      client_email:    params.email || 'Not provided',
+      budget:          BUDGET_LABELS[params.budget_range] || params.budget_range,
+      timeline:        TIMELINE_LABELS[params.buying_timeline] || params.buying_timeline,
+      score:           SCORE_LABELS[params.score] || params.score,
+      whatsapp_link:   `https://wa.me/971${params.phone.replace(/^0/, '').replace(/\D/g, '')}`,
+      gross_yield:     params.roiData ? `${params.roiData.grossRentalYield.toFixed(2)}%` : 'N/A',
+      net_yield:       params.roiData ? `${params.roiData.netRentalYield.toFixed(2)}%` : 'N/A',
+      irr_5yr:         params.roiData ? `${params.roiData.irr5Year.toFixed(2)}%` : 'N/A',
+      monthly_cashflow:params.roiData ? `AED ${Math.round(params.roiData.monthlyNetCashFlow).toLocaleString()}` : 'N/A',
+      projected_value: params.roiData ? `AED ${(params.roiData.projectedValueAfter5Years / 1_000_000).toFixed(2)}M` : 'N/A',
     },
     PUBLIC_KEY
   )
@@ -66,6 +78,13 @@ export async function sendThankYouEmail(params: {
   budget_range: string
   buying_timeline: string
   score: string
+  roiData?: {
+    grossRentalYield: number
+    netRentalYield: number
+    irr5Year: number
+    monthlyNetCashFlow: number
+    projectedValueAfter5Years: number
+  }
 }) {
   if (!emailConfigured() || !THANKYOU_TEMPLATE_ID || !params.email) return
   const { send } = await import('@emailjs/browser')
@@ -74,11 +93,16 @@ export async function sendThankYouEmail(params: {
     SERVICE_ID,
     THANKYOU_TEMPLATE_ID,
     {
-      to_name:       params.name,
-      to_email:      params.email,
-      budget:        BUDGET_LABELS[params.budget_range] || params.budget_range,
-      timeline:      TIMELINE_LABELS[params.buying_timeline] || params.buying_timeline,
-      whatsapp_link: 'https://wa.me/971544245800',
+      to_name:         params.name,
+      to_email:        params.email,
+      budget:          BUDGET_LABELS[params.budget_range] || params.budget_range,
+      timeline:        TIMELINE_LABELS[params.buying_timeline] || params.buying_timeline,
+      whatsapp_link:   'https://wa.me/971544245800',
+      gross_yield:     params.roiData ? `${params.roiData.grossRentalYield.toFixed(2)}%` : 'N/A',
+      net_yield:       params.roiData ? `${params.roiData.netRentalYield.toFixed(2)}%` : 'N/A',
+      irr_5yr:         params.roiData ? `${params.roiData.irr5Year.toFixed(2)}%` : 'N/A',
+      monthly_cashflow:params.roiData ? `AED ${Math.round(params.roiData.monthlyNetCashFlow).toLocaleString()}` : 'N/A',
+      projected_value: params.roiData ? `AED ${(params.roiData.projectedValueAfter5Years / 1_000_000).toFixed(2)}M` : 'N/A',
     },
     PUBLIC_KEY
   )

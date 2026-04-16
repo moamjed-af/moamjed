@@ -13,6 +13,8 @@ export type ROIInput = {
   mortgageRate?: number
   mortgageTerm?: number
   includeCommission?: boolean     // 2% agency fee for ready properties
+  propertySizeSqft?: number       // property size in sq ft (used for service charge)
+  includeDLD?: boolean            // 4% DLD registration fee
 }
 
 export type OperatingExpenses = {
@@ -50,8 +52,9 @@ export type ROIResult = {
   serviceChargeAsRentPercent: number  // How much of rent is eaten by service charge
 
   // ── Total investment ───────────────────────────────────────
-  totalInvestment: number         // Down payment + commission (if applicable)
+  totalInvestment: number         // Down payment + commission + DLD (if applicable)
   agencyCommission?: number
+  dldFee?: number
   mortgagePayment?: number        // Monthly mortgage P&I
   mortgageDetails?: {
     loanAmount: number            // AED borrowed
@@ -125,12 +128,15 @@ export function calculateROI({
   mortgageRate = 4.5,
   mortgageTerm = 25,
   includeCommission = false,
+  propertySizeSqft = 0,
+  includeDLD = false,
 }: ROIInput): ROIResult {
 
   // ── Capital invested ────────────────────────────────────────────────────────
   const downPayment = (propertyPrice * downPaymentPercent) / 100
   const agencyCommission = includeCommission ? propertyPrice * 0.02 : 0
-  const totalInvestment = downPayment + agencyCommission
+  const dldFee = includeDLD ? propertyPrice * 0.04 : 0
+  const totalInvestment = downPayment + agencyCommission + dldFee
   const loanAmount = propertyPrice - downPayment
 
   // ── Rent figures ────────────────────────────────────────────────────────────
@@ -139,7 +145,7 @@ export function calculateROI({
   const effectiveAnnualRent = annualGrossRent - vacancyLoss
 
   // ── Operating expenses ──────────────────────────────────────────────────────
-  const serviceCharge = propertyPrice * 0.012   // 1.2% — Dubai DLD avg
+  const serviceCharge = propertySizeSqft > 0 ? propertySizeSqft * 14 : propertyPrice * 0.012   // AED 14/sqft/yr or 1.2% of price
   const insurance     = propertyPrice * 0.002   // 0.2%
   const maintenance   = propertyPrice * 0.003   // 0.3% reserve
   const managementFee = effectiveAnnualRent * (managementFeePercent / 100)
@@ -256,6 +262,7 @@ export function calculateROI({
     serviceChargeAsRentPercent: +serviceChargeAsRentPercent.toFixed(1),
     totalInvestment:            Math.round(totalInvestment),
     agencyCommission:           agencyCommission > 0 ? Math.round(agencyCommission) : undefined,
+    dldFee:                     dldFee > 0 ? Math.round(dldFee) : undefined,
     mortgagePayment:            mortgagePayment > 0 ? Math.round(mortgagePayment) : undefined,
     mortgageDetails,
     equityAfter5Years:          Math.round(equityAfter5Years),
