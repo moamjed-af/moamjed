@@ -7,6 +7,7 @@ export type ROIInput = {
   appreciationPercent: number
   mortgageRate?: number
   mortgageTerm?: number
+  includeCommission?: boolean   // 2% agency commission for ready properties
 }
 
 export type ROIResult = {
@@ -15,7 +16,8 @@ export type ROIResult = {
   annualROI: number
   monthlyNetCashFlow: number
   annualCashFlow: number
-  totalInvestment: number
+  totalInvestment: number       // down payment + commission (if applicable)
+  agencyCommission?: number     // 2% of property price
   equityAfter5Years: number
   totalReturnAfter5Years: number
   mortgagePayment?: number
@@ -28,20 +30,24 @@ export function calculateROI({
   appreciationPercent,
   mortgageRate = 4.5,
   mortgageTerm = 25,
+  includeCommission = false,
 }: ROIInput): ROIResult {
   const downPayment = (propertyPrice * downPaymentPercent) / 100
+  const agencyCommission = includeCommission ? propertyPrice * 0.02 : 0
+  const totalInvestment = downPayment + agencyCommission
+
   const loanAmount = propertyPrice - downPayment
   const annualRent = expectedMonthlyRent * 12
 
-  // Gross rental yield
+  // Gross rental yield (on property price, not investment)
   const grossRentalYield = (annualRent / propertyPrice) * 100
 
-  // Dubai cost estimates: service charge + insurance
+  // Annual running costs: ~1.5% of property value (service charge + insurance)
   const annualCosts = propertyPrice * 0.015
   const netAnnualRent = annualRent - annualCosts
   const netRentalYield = (netAnnualRent / propertyPrice) * 100
 
-  // Mortgage calculation
+  // Mortgage payment (P&I)
   let mortgagePayment = 0
   if (loanAmount > 0 && mortgageRate > 0) {
     const monthlyRate = mortgageRate / 100 / 12
@@ -54,13 +60,18 @@ export function calculateROI({
   const monthlyNetCashFlow = expectedMonthlyRent - mortgagePayment - annualCosts / 12
   const annualCashFlow = monthlyNetCashFlow * 12
 
+  // 5-year projections
   const valueAfter5Years = propertyPrice * Math.pow(1 + appreciationPercent / 100, 5)
-  const equityAfter5Years = valueAfter5Years - loanAmount * (1 - 5 / mortgageTerm)
+  const remainingLoan = loanAmount > 0 ? loanAmount * (1 - 5 / mortgageTerm) : 0
+  const equityAfter5Years = valueAfter5Years - remainingLoan
   const totalCashFlow5Years = annualCashFlow * 5
-  const totalReturnAfter5Years =
-    ((totalCashFlow5Years + (valueAfter5Years - propertyPrice)) / downPayment) * 100
+  const capitalGain = valueAfter5Years - propertyPrice
+
+  // ROI on total invested capital (including commission)
   const annualROI =
-    ((netAnnualRent + (propertyPrice * appreciationPercent) / 100) / downPayment) * 100
+    ((netAnnualRent + (propertyPrice * appreciationPercent) / 100) / totalInvestment) * 100
+  const totalReturnAfter5Years =
+    ((totalCashFlow5Years + capitalGain) / totalInvestment) * 100
 
   return {
     grossRentalYield: Number(grossRentalYield.toFixed(2)),
@@ -68,7 +79,8 @@ export function calculateROI({
     annualROI: Number(annualROI.toFixed(2)),
     monthlyNetCashFlow: Number(monthlyNetCashFlow.toFixed(0)),
     annualCashFlow: Number(annualCashFlow.toFixed(0)),
-    totalInvestment: Number(downPayment.toFixed(0)),
+    totalInvestment: Number(totalInvestment.toFixed(0)),
+    agencyCommission: agencyCommission > 0 ? Number(agencyCommission.toFixed(0)) : undefined,
     equityAfter5Years: Number(equityAfter5Years.toFixed(0)),
     totalReturnAfter5Years: Number(totalReturnAfter5Years.toFixed(2)),
     mortgagePayment: mortgagePayment ? Number(mortgagePayment.toFixed(0)) : undefined,

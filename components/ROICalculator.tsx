@@ -13,6 +13,7 @@ type CalculatorInputs = {
   appreciationPercent: number
   mortgageRate: number
   includeMortgage: boolean
+  includeCommission: boolean
 }
 
 function formatAED(n: number) {
@@ -22,25 +23,41 @@ function formatAED(n: number) {
 }
 
 const SLIDER_CONFIG = {
-  propertyPrice: { min: 500_000, max: 20_000_000, step: 100_000, label: 'Property Price', format: formatAED },
-  downPaymentPercent: { min: 20, max: 80, step: 5, label: 'Down Payment', format: (v: number) => `${v}%` },
-  expectedMonthlyRent: { min: 2_000, max: 100_000, step: 500, label: 'Monthly Rent', format: formatAED },
-  appreciationPercent: { min: 0, max: 15, step: 0.5, label: 'Annual Appreciation', format: (v: number) => `${v}%` },
+  propertyPrice:         { min: 500_000, max: 20_000_000, step: 100_000, label: 'Property Price',      format: formatAED },
+  downPaymentPercent:    { min: 20,      max: 80,          step: 5,       label: 'Down Payment',         format: (v: number) => `${v}%` },
+  expectedMonthlyRent:   { min: 2_000,   max: 100_000,     step: 500,     label: 'Monthly Rent',         format: formatAED },
+  appreciationPercent:   { min: 0,       max: 15,          step: 0.5,     label: 'Annual Appreciation',  format: (v: number) => `${v}%` },
+}
+
+function Toggle({ on, onToggle, label }: { on: boolean; onToggle: () => void; label: string }) {
+  return (
+    <div className="flex items-center justify-between">
+      <label className="text-ink-muted text-sm font-medium">{label}</label>
+      <button
+        type="button"
+        onClick={onToggle}
+        className={`relative w-12 h-6 rounded-full transition-colors duration-300 ${on ? 'bg-gradient-brand-violet' : 'bg-gray-200'}`}
+      >
+        <span className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow-sm transition-transform duration-300 ${on ? 'translate-x-7' : 'translate-x-1'}`} />
+      </button>
+    </div>
+  )
 }
 
 export default function ROICalculator({ onLeadGate }: { onLeadGate?: (data: ROIResult) => void }) {
-  const [step, setStep] = useState<1 | 2>(1)
   const [results, setResults] = useState<ROIResult | null>(null)
   const [loading, setLoading] = useState(false)
+  const [calculated, setCalculated] = useState(false)
 
   const { watch, setValue } = useForm<CalculatorInputs>({
     defaultValues: {
-      propertyPrice: 1_500_000,
-      downPaymentPercent: 25,
+      propertyPrice:       1_500_000,
+      downPaymentPercent:  25,
       expectedMonthlyRent: 8_000,
       appreciationPercent: 5,
-      mortgageRate: 4.5,
-      includeMortgage: true,
+      mortgageRate:        4.5,
+      includeMortgage:     true,
+      includeCommission:   false,
     },
   })
   const values = watch()
@@ -50,15 +67,16 @@ export default function ROICalculator({ onLeadGate }: { onLeadGate?: (data: ROIR
     analytics.calculatorStarted()
     try {
       const data = calculateROI({
-        propertyPrice: values.propertyPrice,
-        downPaymentPercent: values.downPaymentPercent,
+        propertyPrice:       values.propertyPrice,
+        downPaymentPercent:  values.downPaymentPercent,
         expectedMonthlyRent: values.expectedMonthlyRent,
         appreciationPercent: values.appreciationPercent,
-        mortgageRate: values.includeMortgage ? values.mortgageRate : 0,
-        mortgageTerm: 25,
+        mortgageRate:        values.includeMortgage ? values.mortgageRate : 0,
+        mortgageTerm:        25,
+        includeCommission:   values.includeCommission,
       })
       setResults(data)
-      setStep(2)
+      setCalculated(true)
       analytics.calculatorCompleted({ propertyPrice: values.propertyPrice, rentalYield: data.grossRentalYield })
     } finally {
       setLoading(false)
@@ -89,12 +107,12 @@ export default function ROICalculator({ onLeadGate }: { onLeadGate?: (data: ROIR
             </span>
           </h2>
           <p className="text-ink-muted text-lg max-w-2xl mx-auto">
-            Input your property details and instantly see rental yield, cash flow, and 5-year projections.
+            Adjust the sliders and see your rental yield, monthly cash flow, and 5-year projections instantly.
           </p>
         </motion.div>
 
         <div className="grid lg:grid-cols-2 gap-8 items-start">
-          {/* Input Panel */}
+          {/* ── Input Panel ── */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -131,18 +149,14 @@ export default function ROICalculator({ onLeadGate }: { onLeadGate?: (data: ROIR
                 )
               })}
 
-              {/* Mortgage Toggle */}
-              <div className="border-t border-surface-border pt-6">
-                <div className="flex items-center justify-between mb-4">
-                  <label className="text-ink-muted text-sm font-medium">Include Mortgage</label>
-                  <button
-                    type="button"
-                    onClick={() => setValue('includeMortgage', !values.includeMortgage)}
-                    className={`relative w-12 h-6 rounded-full transition-colors duration-300 ${values.includeMortgage ? 'bg-gradient-brand-violet' : 'bg-gray-200'}`}
-                  >
-                    <span className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow-sm transition-transform duration-300 ${values.includeMortgage ? 'translate-x-7' : 'translate-x-1'}`} />
-                  </button>
-                </div>
+              {/* Options */}
+              <div className="border-t border-surface-border pt-6 space-y-5">
+                {/* Mortgage toggle */}
+                <Toggle
+                  label="Include Mortgage Financing"
+                  on={values.includeMortgage}
+                  onToggle={() => setValue('includeMortgage', !values.includeMortgage)}
+                />
                 {values.includeMortgage && (
                   <div>
                     <div className="flex justify-between items-center mb-3">
@@ -159,6 +173,20 @@ export default function ROICalculator({ onLeadGate }: { onLeadGate?: (data: ROIR
                     />
                   </div>
                 )}
+
+                {/* Commission toggle */}
+                <div>
+                  <Toggle
+                    label="Ready Property — include 2% agency commission"
+                    on={values.includeCommission}
+                    onToggle={() => setValue('includeCommission', !values.includeCommission)}
+                  />
+                  {values.includeCommission && (
+                    <p className="text-xs text-ink-faint mt-2 pl-1">
+                      Commission: {formatAED(values.propertyPrice * 0.02)} added to your total investment
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -170,13 +198,13 @@ export default function ROICalculator({ onLeadGate }: { onLeadGate?: (data: ROIR
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
                   <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Calculating...
+                  Calculating…
                 </span>
-              ) : 'Calculate ROI Now →'}
+              ) : calculated ? 'Recalculate →' : 'Calculate ROI Now →'}
             </button>
           </motion.div>
 
-          {/* Results Panel */}
+          {/* ── Results Panel ── */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -184,11 +212,12 @@ export default function ROICalculator({ onLeadGate }: { onLeadGate?: (data: ROIR
             transition={{ duration: 0.6 }}
           >
             <AnimatePresence mode="wait">
-              {step === 1 ? (
+              {!results ? (
+                /* Empty state */
                 <motion.div
                   key="placeholder"
                   initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                  className="bg-white rounded-2xl border border-surface-border shadow-card p-5 sm:p-8 min-h-[400px] sm:min-h-[500px] flex flex-col items-center justify-center text-center"
+                  className="bg-white rounded-2xl border border-surface-border shadow-card p-5 sm:p-8 min-h-[420px] flex flex-col items-center justify-center text-center"
                 >
                   <div className="w-24 h-24 rounded-2xl bg-violet-pale border border-violet/20 flex items-center justify-center mb-6">
                     <svg className="w-12 h-12 text-violet" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -196,7 +225,7 @@ export default function ROICalculator({ onLeadGate }: { onLeadGate?: (data: ROIR
                     </svg>
                   </div>
                   <h3 className="text-2xl font-bold text-ink mb-3">Your ROI Report</h3>
-                  <p className="text-ink-muted mb-8 max-w-xs">Adjust the sliders and click "Calculate ROI Now" to see your full investment breakdown.</p>
+                  <p className="text-ink-muted mb-8 max-w-xs">Adjust the sliders on the left and click "Calculate ROI Now" to see your full investment breakdown.</p>
                   <div className="grid grid-cols-2 gap-3 w-full max-w-xs">
                     {['Rental Yield', 'Annual ROI', 'Cash Flow', '5-Year Return'].map((item) => (
                       <div key={item} className="bg-surface-alt rounded-xl p-4 border border-surface-border">
@@ -206,7 +235,8 @@ export default function ROICalculator({ onLeadGate }: { onLeadGate?: (data: ROIR
                     ))}
                   </div>
                 </motion.div>
-              ) : results ? (
+              ) : (
+                /* Full results — no lock */
                 <motion.div
                   key="results"
                   initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
@@ -218,63 +248,82 @@ export default function ROICalculator({ onLeadGate }: { onLeadGate?: (data: ROIR
                     <span className="px-3 py-1 rounded-full bg-green-50 text-green-600 text-sm font-semibold border border-green-100">Live Results</span>
                   </div>
 
+                  {/* Top 4 stats */}
                   <div className="grid grid-cols-2 gap-3">
-                    <ResultCard label="Gross Rental Yield" value={`${results.grossRentalYield}%`} highlight="violet" sublabel="Annual gross" />
-                    <ResultCard label="Net Rental Yield" value={`${results.netRentalYield}%`} highlight="brand" sublabel="After costs" />
-                    <ResultCard label="Annual ROI" value={`${results.annualROI}%`} highlight="violet" sublabel="On invested capital" />
+                    <ResultCard label="Gross Rental Yield" value={`${results.grossRentalYield}%`}  highlight="violet" sublabel="Annual gross" />
+                    <ResultCard label="Net Rental Yield"   value={`${results.netRentalYield}%`}    highlight="brand"  sublabel="After running costs" />
+                    <ResultCard label="Annual ROI"         value={`${results.annualROI}%`}          highlight="violet" sublabel="On invested capital" />
                     <ResultCard
                       label="Monthly Cash Flow"
                       value={formatAED(results.monthlyNetCashFlow)}
                       highlight={results.monthlyNetCashFlow > 0 ? 'green' : 'red'}
-                      sublabel={results.monthlyNetCashFlow > 0 ? 'Positive flow' : 'Review costs'}
+                      sublabel={results.monthlyNetCashFlow > 0 ? 'Positive cash flow' : 'Review figures'}
                     />
                   </div>
 
+                  {/* Cost breakdown */}
                   <div className="border-t border-surface-border pt-4 space-y-2.5">
-                    {[
-                      { label: 'Your Down Payment', value: formatAED(results.totalInvestment), color: 'text-ink' },
-                      results.mortgagePayment ? { label: 'Monthly Mortgage', value: formatAED(results.mortgagePayment), color: 'text-ink' } : null,
-                      { label: 'Annual Net Cash Flow', value: formatAED(results.annualCashFlow), color: results.annualCashFlow > 0 ? 'text-green-600' : 'text-red-500' },
-                    ].filter(Boolean).map((row) => (
-                      <div key={row!.label} className="flex justify-between text-sm">
-                        <span className="text-ink-muted">{row!.label}</span>
-                        <span className={`font-semibold ${row!.color}`}>{row!.value}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Locked 5-year projection */}
-                  <div className="relative border border-violet/20 rounded-xl p-6 bg-violet-pale overflow-hidden">
-                    <div className="blur-sm pointer-events-none select-none space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-ink-muted">Equity After 5 Years</span>
-                        <span className="text-ink font-semibold">{formatAED(results.equityAfter5Years)}</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-ink-muted">Total 5-Year ROI</span>
-                        <span className="text-green-600 font-bold text-lg">{results.totalReturnAfter5Years}%</span>
-                      </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-ink-muted">Down Payment ({values.downPaymentPercent}%)</span>
+                      <span className="text-ink font-semibold">{formatAED((values.propertyPrice * values.downPaymentPercent) / 100)}</span>
                     </div>
-                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm rounded-xl">
-                      <div className="w-10 h-10 rounded-full bg-violet-pale border border-violet/20 flex items-center justify-center mb-3">
-                        <svg className="w-5 h-5 text-violet" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                        </svg>
+                    {results.agencyCommission ? (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-ink-muted">Agency Commission (2%)</span>
+                        <span className="text-ink font-semibold">{formatAED(results.agencyCommission)}</span>
                       </div>
-                      <p className="text-ink font-semibold text-sm mb-1">Unlock 5-Year Projections</p>
-                      <p className="text-ink-muted text-xs mb-4 text-center">Free report with equity forecast & deal matches</p>
-                      <button
-                        onClick={() => onLeadGate?.(results)}
-                        className="px-6 py-2.5 bg-gradient-brand-violet text-white rounded-xl font-semibold text-sm transition-all duration-200 shadow-violet hover:shadow-violet-lg"
-                      >
-                        Unlock Full Report →
-                      </button>
+                    ) : null}
+                    <div className="flex justify-between text-sm font-semibold border-t border-surface-border pt-2">
+                      <span className="text-ink">Total Investment</span>
+                      <span className="text-violet">{formatAED(results.totalInvestment)}</span>
+                    </div>
+                    {results.mortgagePayment ? (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-ink-muted">Monthly Mortgage Payment</span>
+                        <span className="text-ink font-semibold">{formatAED(results.mortgagePayment)}</span>
+                      </div>
+                    ) : null}
+                    <div className="flex justify-between text-sm">
+                      <span className="text-ink-muted">Annual Net Cash Flow</span>
+                      <span className={`font-semibold ${results.annualCashFlow > 0 ? 'text-green-600' : 'text-red-500'}`}>{formatAED(results.annualCashFlow)}</span>
                     </div>
                   </div>
 
-                  <button onClick={() => setStep(1)} className="w-full py-2 text-ink-muted hover:text-ink text-sm transition-colors">← Recalculate</button>
+                  {/* 5-Year Projections — fully visible */}
+                  <div className="border border-violet/20 rounded-xl p-5 bg-gradient-to-br from-violet-pale to-blue-50 space-y-3">
+                    <p className="text-sm font-bold text-ink mb-1">📈 5-Year Projection</p>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-ink-muted">Projected Property Value</span>
+                      <span className="text-ink font-semibold">
+                        {formatAED(values.propertyPrice * Math.pow(1 + values.appreciationPercent / 100, 5))}
+                      </span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-ink-muted">Equity After 5 Years</span>
+                      <span className="text-ink font-semibold">{formatAED(results.equityAfter5Years)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm border-t border-violet/20 pt-3">
+                      <span className="text-ink font-semibold">Total 5-Year Return</span>
+                      <span className="text-violet font-black text-lg">{results.totalReturnAfter5Years}%</span>
+                    </div>
+                  </div>
+
+                  {/* CTA */}
+                  <button
+                    onClick={() => onLeadGate?.(results)}
+                    className="w-full py-4 bg-gradient-brand-violet text-white rounded-xl font-bold text-base transition-all duration-300 shadow-violet hover:shadow-violet-lg hover:-translate-y-0.5"
+                  >
+                    Get Personalised Property Matches →
+                  </button>
+                  <p className="text-center text-xs text-ink-faint">
+                    Free • Mo will personally shortlist deals matching your criteria
+                  </p>
+
+                  <button onClick={() => { setResults(null); setCalculated(false) }} className="w-full py-2 text-ink-faint hover:text-ink-muted text-sm transition-colors">
+                    ← Recalculate
+                  </button>
                 </motion.div>
-              ) : null}
+              )}
             </AnimatePresence>
           </motion.div>
         </div>
@@ -286,15 +335,15 @@ export default function ROICalculator({ onLeadGate }: { onLeadGate?: (data: ROIR
 function ResultCard({ label, value, highlight, sublabel }: { label: string; value: string; highlight?: string; sublabel?: string }) {
   const styles: Record<string, string> = {
     violet: 'bg-violet-pale border-violet/20',
-    brand: 'bg-blue-50 border-brand/20',
-    green: 'bg-green-50 border-green-200',
-    red: 'bg-red-50 border-red-200',
+    brand:  'bg-blue-50 border-brand/20',
+    green:  'bg-green-50 border-green-200',
+    red:    'bg-red-50 border-red-200',
   }
   const text: Record<string, string> = {
     violet: 'text-violet',
-    brand: 'text-brand',
-    green: 'text-green-600',
-    red: 'text-red-500',
+    brand:  'text-brand',
+    green:  'text-green-600',
+    red:    'text-red-500',
   }
   return (
     <div className={`rounded-xl p-4 border ${styles[highlight || 'violet'] || styles.violet}`}>

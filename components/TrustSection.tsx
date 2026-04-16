@@ -100,15 +100,6 @@ export default function TrustSection() {
           </div>
         </motion.div>
 
-        {/* Press */}
-        <motion.div initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ delay: 0.6 }} className="mt-16 text-center">
-          <p className="text-ink-faint text-sm mb-6 uppercase tracking-widest">As Seen In</p>
-          <div className="flex flex-wrap items-center justify-center gap-8 opacity-25">
-            {['Gulf News', 'Khaleej Times', 'Arabian Business', 'Forbes Middle East', 'Bloomberg'].map((pub) => (
-              <span key={pub} className="text-ink font-bold text-lg tracking-wide">{pub}</span>
-            ))}
-          </div>
-        </motion.div>
       </div>
     </section>
   )
