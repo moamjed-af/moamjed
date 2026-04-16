@@ -12,7 +12,7 @@ async function sendEmails(lead: {
   const apiKey = process.env.RESEND_API_KEY
   if (!apiKey || apiKey === 're_XXXXXXXXXX') return // skip if not configured
 
-  const notificationEmail = process.env.NOTIFICATION_EMAIL || 'mo@moamjed.com'
+  const notificationEmail = process.env.NOTIFICATION_EMAIL || 'moamjed66@gmail.com'
   const fromEmail = process.env.EMAIL_FROM || 'noreply@moamjed.com'
 
   const scoreEmoji = lead.score === 'HIGH' ? '🔥' : lead.score === 'MEDIUM' ? '⚡' : '📬'

@@ -112,7 +112,7 @@ const jsonLd = {
       description:
         'Mo Amjad is a RERA-licensed Dubai real estate broker specialising in high-ROI investment properties. Based in DIFC, Dubai.',
       telephone: '+971544245800',
-      email: 'mo@moamjed.com',
+      email: 'moamjed66@gmail.com',
       address: {
         '@type': 'PostalAddress',
         streetAddress: 'DIFC',

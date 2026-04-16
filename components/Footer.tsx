@@ -86,7 +86,7 @@ export default function Footer() {
             <ul className="space-y-3">
               <li className="flex items-start gap-2 text-sm text-white/40"><span className="mt-0.5">📍</span><span>DIFC, Dubai,<br />United Arab Emirates</span></li>
               <li className="flex items-center gap-2 text-sm text-white/40"><span>📱</span><a href={`https://wa.me/${whatsappNumber}`} className="hover:text-white transition-colors">+{whatsappNumber}</a></li>
-              <li className="flex items-center gap-2 text-sm text-white/40"><span>✉️</span><a href="mailto:mo@moamjed.com" className="hover:text-white transition-colors">mo@moamjed.com</a></li>
+              <li className="flex items-center gap-2 text-sm text-white/40"><span>✉️</span><a href="mailto:moamjed66@gmail.com" className="hover:text-white transition-colors">moamjed66@gmail.com</a></li>
               <li className="flex items-center gap-2 text-sm text-white/40"><span>🕐</span><span>Mon–Sat, 9am–8pm GST</span></li>
             </ul>
             <div className="mt-6 inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-white/10 bg-white/5 text-xs text-white/30">
