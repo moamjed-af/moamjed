@@ -375,7 +375,6 @@ export default function ROICalculator({ onLeadGate }: { onLeadGate?: (data: ROIR
                   {/* 2. Cash Flow */}
                   <Section title="Monthly Cash Flow" icon="💰">
                     <Metric label="Gross Rent"         value={fAED(results.monthlyGrossRent)} />
-                    <Metric label="Monthly Costs"      value={`− ${fAED(results.monthlyHoldingCosts)}`} accent="text-red-500" />
                     <Metric label="Net Cash Flow"      value={fAED(results.monthlyNetCashFlow)}
                       accent={results.monthlyNetCashFlow >= 0 ? 'text-green-600' : 'text-red-500'}
                       sub={results.monthlyNetCashFlow >= 0 ? 'Positive — property pays for itself' : 'Top-up required monthly'} />
