@@ -32,7 +32,6 @@ function fNum(n: number) { return n.toLocaleString() }
 const SLIDERS = [
   { key: 'propertyPrice',       min: 500_000,  max: 20_000_000, step: 100_000, label: 'Property Price',         fmt: fAED },
   { key: 'downPaymentPercent',  min: 20,       max: 80,          step: 5,      label: 'Down Payment',            fmt: (v: number) => `${v}%` },
-  { key: 'expectedAnnualRent',  min: 24_000,   max: 1_200_000,   step: 12_000, label: 'Annual Rent (gross)',      fmt: fAED },
   { key: 'appreciationPercent', min: 0,        max: 15,          step: 0.5,    label: 'Annual Capital Growth',   fmt: (v: number) => `${v}%` },
   { key: 'vacancyRatePercent',  min: 0,        max: 20,          step: 1,      label: 'Vacancy Rate',            fmt: (v: number) => `${v}%` },
 ] as const
@@ -183,6 +182,25 @@ export default function ROICalculator({ onLeadGate }: { onLeadGate?: (data: ROIR
               {SLIDERS.map(cfg => (
                 <Slider key={cfg.key} cfg={cfg} value={v[cfg.key] as number} onChange={val => setValue(cfg.key, val)} />
               ))}
+
+              {/* Annual Rent — free-type number input */}
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <label className="text-ink-muted text-sm font-medium">Annual Rent (gross)</label>
+                  <span className="text-ink font-bold">{v.expectedAnnualRent > 0 ? fAED(v.expectedAnnualRent) : '—'}</span>
+                </div>
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-ink-muted text-sm font-medium pointer-events-none">AED</span>
+                  <input
+                    type="number" min={0} step={1000}
+                    value={v.expectedAnnualRent || ''}
+                    placeholder="e.g. 96000"
+                    onChange={e => setValue('expectedAnnualRent', parseFloat(e.target.value) || 0)}
+                    className="w-full border border-surface-border rounded-xl pl-14 pr-4 py-2.5 text-sm text-ink bg-surface-alt outline-none focus:border-violet transition-colors"
+                  />
+                </div>
+                <p className="text-xs text-ink-faint mt-1">Enter any annual rent amount · AED 8,000/mo = AED 96,000/yr</p>
+              </div>
 
               {/* Property Size */}
               <div>
