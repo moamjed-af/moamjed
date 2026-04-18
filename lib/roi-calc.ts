@@ -8,21 +8,20 @@ export type ROIInput = {
   downPaymentPercent: number
   expectedMonthlyRent: number
   appreciationPercent: number
-  vacancyRatePercent?: number     // % of year property sits vacant (default 5%)
   managementFeePercent?: number   // % of rent paid to property manager (0 if self-managed)
   mortgageRate?: number
   mortgageTerm?: number
   includeCommission?: boolean     // 2% agency fee for ready properties
-  propertySizeSqft?: number       // property size in sq ft (used for service charge)
+  propertySizeSqft?: number       // property size in sq ft
+  serviceChargePerSqft?: number   // AED/sqft/year — user-entered service charge rate
   includeDLD?: boolean            // 4% DLD registration fee
 }
 
 export type OperatingExpenses = {
-  serviceCharge: number           // AED/year — ~1.2% of property price
+  serviceCharge: number           // AED/year — user rate × sq ft
   insurance: number               // AED/year — ~0.2% of property price
   maintenance: number             // AED/year — ~0.3% of property price
   managementFee: number           // AED/year — % of rent
-  vacancyLoss: number             // AED/year — rental income lost to vacancy
   total: number                   // total annual opex
 }
 
@@ -123,12 +122,12 @@ export function calculateROI({
   downPaymentPercent,
   expectedMonthlyRent,
   appreciationPercent,
-  vacancyRatePercent = 5,
   managementFeePercent = 0,
   mortgageRate = 4.5,
   mortgageTerm = 25,
   includeCommission = false,
   propertySizeSqft = 0,
+  serviceChargePerSqft = 0,
   includeDLD = false,
 }: ROIInput): ROIResult {
 
@@ -139,29 +138,30 @@ export function calculateROI({
   const totalInvestment = downPayment + agencyCommission + dldFee
   const loanAmount = propertyPrice - downPayment
 
-  // ── Rent figures ────────────────────────────────────────────────────────────
+  // ── Rent figures — no vacancy deduction ────────────────────────────────────
   const annualGrossRent = expectedMonthlyRent * 12
-  const vacancyLoss = annualGrossRent * (vacancyRatePercent / 100)
-  const effectiveAnnualRent = annualGrossRent - vacancyLoss
+  const effectiveAnnualRent = annualGrossRent   // vacancy removed
 
   // ── Operating expenses ──────────────────────────────────────────────────────
-  const serviceCharge = propertySizeSqft > 0 ? propertySizeSqft * 14 : propertyPrice * 0.012   // AED 14/sqft/yr or 1.2% of price
+  // Service charge: user rate × sq ft; if no size entered, 0
+  const serviceCharge = (serviceChargePerSqft > 0 && propertySizeSqft > 0)
+    ? serviceChargePerSqft * propertySizeSqft
+    : 0
   const insurance     = propertyPrice * 0.002   // 0.2%
   const maintenance   = propertyPrice * 0.003   // 0.3% reserve
   const managementFee = effectiveAnnualRent * (managementFeePercent / 100)
-  const totalOpex     = serviceCharge + insurance + maintenance + managementFee + vacancyLoss
+  const totalOpex     = serviceCharge + insurance + maintenance + managementFee
 
   const operatingExpenses: OperatingExpenses = {
     serviceCharge: Math.round(serviceCharge),
     insurance:     Math.round(insurance),
     maintenance:   Math.round(maintenance),
     managementFee: Math.round(managementFee),
-    vacancyLoss:   Math.round(vacancyLoss),
     total:         Math.round(totalOpex),
   }
 
-  // ── NOI (Net Operating Income) — ignores financing ──────────────────────────
-  const noi = effectiveAnnualRent - serviceCharge - insurance - maintenance - managementFee
+  // ── NOI = Gross Rent − Service Charge − other opex (net rent basis) ─────────
+  const noi = annualGrossRent - serviceCharge - insurance - maintenance - managementFee
 
   // ── Mortgage ────────────────────────────────────────────────────────────────
   let mortgagePayment = 0
@@ -216,6 +216,7 @@ export function calculateROI({
   const breakEvenOccupancy = annualGrossRent > 0
     ? Math.min(100, (fixedAnnualCosts / annualGrossRent) * 100)
     : 100
+
 
   // ── Tenant demand ───────────────────────────────────────────────────────────
   const demand = tenantDemand(grossRentalYield, priceToRentRatio, propertyPrice)
