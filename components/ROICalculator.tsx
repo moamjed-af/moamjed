@@ -13,10 +13,8 @@ type Inputs = {
   appreciationPercent: number
   serviceChargePerSqft: number
   mortgageRate: number
-  managementFeePercent: number
   includeMortgage: boolean
   includeCommission: boolean
-  includeManagement: boolean
   includeDLD: boolean
   propertySizeSqft: number
 }
@@ -153,11 +151,9 @@ export default function ROICalculator({ onLeadGate }: { onLeadGate?: (data: ROIR
       expectedAnnualRent:   96_000,
       appreciationPercent:  5,
       serviceChargePerSqft: 0,
-      mortgageRate:         4.5,
-      managementFeePercent: 8,
+      mortgageRate:        4.5,
       includeMortgage:     true,
       includeCommission:   false,
-      includeManagement:   false,
       includeDLD:          false,
       propertySizeSqft:    0,
     },
@@ -173,7 +169,7 @@ export default function ROICalculator({ onLeadGate }: { onLeadGate?: (data: ROIR
         downPaymentPercent:   v.downPaymentPercent,
         expectedMonthlyRent:  v.expectedAnnualRent / 12,
         appreciationPercent:  v.appreciationPercent,
-        managementFeePercent: v.includeManagement ? v.managementFeePercent : 0,
+        managementFeePercent: 0,
         mortgageRate:         v.includeMortgage ? v.mortgageRate : 0,
         mortgageTerm:         25,
         includeCommission:    v.includeCommission,
@@ -312,25 +308,6 @@ export default function ROICalculator({ onLeadGate }: { onLeadGate?: (data: ROIR
                   />
                 </div>
 
-                {/* Management */}
-                <div>
-                  <Toggle label="Property Management" on={v.includeManagement} onToggle={() => setValue('includeManagement', !v.includeManagement)}
-                    sub={v.includeManagement ? `${v.managementFeePercent}% of effective rent / year` : 'Self-managed'}
-                  />
-                  {v.includeManagement && (
-                    <div className="pl-2 mt-3">
-                      <div className="flex justify-between mb-2">
-                        <span className="text-ink-muted text-sm">Management Fee</span>
-                        <span className="text-ink font-bold">{v.managementFeePercent}%</span>
-                      </div>
-                      <input type="range" min={5} max={15} step={1} value={v.managementFeePercent}
-                        onChange={e => setValue('managementFeePercent', parseFloat(e.target.value))}
-                        className="w-full h-3 rounded-full appearance-none cursor-pointer touch-none"
-                        style={{ background: `linear-gradient(to right,#7C3AED 0%,#123ba3 ${((v.managementFeePercent-5)/10)*100}%,#E5E7EB ${((v.managementFeePercent-5)/10)*100}%,#E5E7EB 100%)` }}
-                      />
-                    </div>
-                  )}
-                </div>
               </div>
             </div>
 
@@ -429,16 +406,12 @@ export default function ROICalculator({ onLeadGate }: { onLeadGate?: (data: ROIR
                   )}
 
                   {/* 4. Operating Expenses */}
-                  <Section title="Operating Expenses Breakdown" icon="🏗️">
-                    <Metric label="Service Charges"    value={fAED(results.operatingExpenses.serviceCharge)} sub="~1.2% of property value / year" />
-                    <Metric label="Insurance"          value={fAED(results.operatingExpenses.insurance)}     sub="~0.2% / year" />
-                    <Metric label="Maintenance Reserve" value={fAED(results.operatingExpenses.maintenance)}  sub="~0.3% / year" />
-                    {results.operatingExpenses.managementFee > 0 && (
-                      <Metric label="Management Fee"   value={fAED(results.operatingExpenses.managementFee)} sub="Property manager" />
-                    )}
-                    <Metric label="Total Annual Opex"  value={fAED(results.operatingExpenses.total)} accent="text-ink" />
+                  <Section title="Operating Expenses" icon="🏗️">
+                    <Metric label="Service Charge" value={fAED(results.operatingExpenses.serviceCharge)}
+                      sub={`Deducted from gross rent`} accent="text-ink" />
+                    <Metric label="Total Annual Opex" value={fAED(results.operatingExpenses.total)} accent="text-ink" />
                     <Metric label="Service Charge Impact" value={fPct(results.serviceChargeAsRentPercent)}
-                      sub="% of gross rent consumed by service charges"
+                      sub="% of gross rent consumed by service charge"
                       accent={results.serviceChargeAsRentPercent > 15 ? 'text-amber-600' : 'text-ink'} />
                   </Section>
 
