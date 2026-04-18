@@ -35,6 +35,44 @@ const SLIDERS = [
   { key: 'vacancyRatePercent',  min: 0,        max: 20,          step: 1,      label: 'Vacancy Rate',            fmt: (v: number) => `${v}%` },
 ] as const
 
+function MoneyInput({ label, value, onChange, placeholder, hint }: {
+  label: string
+  value: number
+  onChange: (v: number) => void
+  placeholder?: string
+  hint?: string
+}) {
+  const format = (n: number) => n > 0 ? n.toLocaleString('en-US') : ''
+  const [display, setDisplay] = useState(format(value))
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value.replace(/,/g, '').replace(/[^0-9]/g, '')
+    const num = raw ? parseInt(raw, 10) : 0
+    setDisplay(num > 0 ? num.toLocaleString('en-US') : '')
+    onChange(num)
+  }
+
+  return (
+    <div>
+      <div className="flex justify-between items-center mb-2">
+        <label className="text-ink-muted text-sm font-medium">{label}</label>
+        <span className="text-ink font-bold">{value > 0 ? fAED(value) : '—'}</span>
+      </div>
+      <div className="relative">
+        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-ink-muted text-sm font-medium pointer-events-none">AED</span>
+        <input
+          type="text" inputMode="numeric"
+          value={display}
+          placeholder={placeholder}
+          onChange={handleChange}
+          className="w-full border border-surface-border rounded-xl pl-14 pr-4 py-2.5 text-sm text-ink bg-surface-alt outline-none focus:border-violet transition-colors"
+        />
+      </div>
+      {hint && <p className="text-xs text-ink-faint mt-1">{hint}</p>}
+    </div>
+  )
+}
+
 function Slider({ cfg, value, onChange }: {
   cfg: typeof SLIDERS[number]
   value: number
@@ -178,47 +216,27 @@ export default function ROICalculator({ onLeadGate }: { onLeadGate?: (data: ROIR
             <h3 className="text-xl font-bold text-ink mb-7">Property Details</h3>
 
             <div className="space-y-7">
-              {/* Property Price — free-type number input */}
-              <div>
-                <div className="flex justify-between items-center mb-2">
-                  <label className="text-ink-muted text-sm font-medium">Property Price</label>
-                  <span className="text-ink font-bold">{v.propertyPrice > 0 ? fAED(v.propertyPrice) : '—'}</span>
-                </div>
-                <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-ink-muted text-sm font-medium pointer-events-none">AED</span>
-                  <input
-                    type="number" min={0} step={10000}
-                    value={v.propertyPrice || ''}
-                    placeholder="e.g. 1500000"
-                    onChange={e => setValue('propertyPrice', parseFloat(e.target.value) || 0)}
-                    className="w-full border border-surface-border rounded-xl pl-14 pr-4 py-2.5 text-sm text-ink bg-surface-alt outline-none focus:border-violet transition-colors"
-                  />
-                </div>
-                <p className="text-xs text-ink-faint mt-1">Enter any property price · e.g. AED 1,500,000</p>
-              </div>
+              {/* Property Price */}
+              <MoneyInput
+                label="Property Price"
+                value={v.propertyPrice}
+                onChange={val => setValue('propertyPrice', val)}
+                placeholder="1,500,000"
+                hint="Enter any property price"
+              />
 
               {SLIDERS.map(cfg => (
                 <Slider key={cfg.key} cfg={cfg} value={v[cfg.key] as number} onChange={val => setValue(cfg.key, val)} />
               ))}
 
-              {/* Annual Rent — free-type number input */}
-              <div>
-                <div className="flex justify-between items-center mb-2">
-                  <label className="text-ink-muted text-sm font-medium">Annual Rent (gross)</label>
-                  <span className="text-ink font-bold">{v.expectedAnnualRent > 0 ? fAED(v.expectedAnnualRent) : '—'}</span>
-                </div>
-                <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-ink-muted text-sm font-medium pointer-events-none">AED</span>
-                  <input
-                    type="number" min={0} step={1000}
-                    value={v.expectedAnnualRent || ''}
-                    placeholder="e.g. 96000"
-                    onChange={e => setValue('expectedAnnualRent', parseFloat(e.target.value) || 0)}
-                    className="w-full border border-surface-border rounded-xl pl-14 pr-4 py-2.5 text-sm text-ink bg-surface-alt outline-none focus:border-violet transition-colors"
-                  />
-                </div>
-                <p className="text-xs text-ink-faint mt-1">Enter any annual rent amount · AED 8,000/mo = AED 96,000/yr</p>
-              </div>
+              {/* Annual Rent */}
+              <MoneyInput
+                label="Annual Rent (gross)"
+                value={v.expectedAnnualRent}
+                onChange={val => setValue('expectedAnnualRent', val)}
+                placeholder="96,000"
+                hint="AED 8,000/mo = AED 96,000/yr"
+              />
 
               {/* Property Size */}
               <div>
