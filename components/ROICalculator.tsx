@@ -312,7 +312,8 @@ export default function ROICalculator({ onLeadGate }: { onLeadGate?: (data: ROIR
                           min={5} max={25} step={1}
                           value={v.mortgageTerm || ''}
                           placeholder="25"
-                          onChange={e => {
+                          onChange={e => setValue('mortgageTerm', parseInt(e.target.value) || 0)}
+                          onBlur={e => {
                             const val = parseInt(e.target.value) || 25
                             setValue('mortgageTerm', Math.min(25, Math.max(5, val)))
                           }}
