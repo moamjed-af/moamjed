@@ -13,6 +13,7 @@ type Inputs = {
   appreciationPercent: number
   serviceChargePerSqft: number
   mortgageRate: number
+  mortgageTerm: number
   includeMortgage: boolean
   includeCommission: boolean
   includeDLD: boolean
@@ -151,6 +152,7 @@ export default function ROICalculator({ onLeadGate }: { onLeadGate?: (data: ROIR
       appreciationPercent:  5,
       serviceChargePerSqft: 0,
       mortgageRate:        4.5,
+      mortgageTerm:        25,
       includeMortgage:     true,
       includeCommission:   false,
       includeDLD:          false,
@@ -169,7 +171,7 @@ export default function ROICalculator({ onLeadGate }: { onLeadGate?: (data: ROIR
         expectedMonthlyRent:  v.expectedAnnualRent / 12,
         appreciationPercent:  v.appreciationPercent,
         mortgageRate:         v.includeMortgage ? v.mortgageRate : 0,
-        mortgageTerm:         25,
+        mortgageTerm:         v.mortgageTerm,
         includeCommission:    v.includeCommission,
         propertySizeSqft:     v.propertySizeSqft,
         serviceChargePerSqft: v.serviceChargePerSqft,
@@ -291,13 +293,36 @@ export default function ROICalculator({ onLeadGate }: { onLeadGate?: (data: ROIR
                 {/* Mortgage */}
                 <Toggle label="Mortgage Financing" on={v.includeMortgage} onToggle={() => setValue('includeMortgage', !v.includeMortgage)} />
                 {v.includeMortgage && (
-                  <PercentInput
-                    label="Mortgage Rate"
-                    value={v.mortgageRate}
-                    onChange={val => setValue('mortgageRate', val)}
-                    min={0.1} max={15} step={0.1}
-                    hint="Annual interest rate from your bank"
-                  />
+                  <>
+                    <PercentInput
+                      label="Mortgage Rate"
+                      value={v.mortgageRate}
+                      onChange={val => setValue('mortgageRate', val)}
+                      min={0.1} max={15} step={0.1}
+                      hint="Annual interest rate from your bank"
+                    />
+                    <div>
+                      <div className="flex justify-between items-center mb-2">
+                        <label className="text-ink-muted text-sm font-medium">Mortgage Tenure</label>
+                        <span className="text-ink font-bold">{v.mortgageTerm} years</span>
+                      </div>
+                      <div className="relative">
+                        <input
+                          type="number" inputMode="numeric"
+                          min={5} max={25} step={1}
+                          value={v.mortgageTerm || ''}
+                          placeholder="25"
+                          onChange={e => {
+                            const val = parseInt(e.target.value) || 25
+                            setValue('mortgageTerm', Math.min(25, Math.max(5, val)))
+                          }}
+                          className="w-full border border-surface-border rounded-xl px-4 pr-16 py-2.5 text-sm text-ink bg-surface-alt outline-none focus:border-violet transition-colors"
+                        />
+                        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-ink-muted text-sm pointer-events-none">years</span>
+                      </div>
+                      <p className="text-xs text-ink-faint mt-1">Min 5 years · Max 25 years</p>
+                    </div>
+                  </>
                 )}
 
                 {/* Commission */}
