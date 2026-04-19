@@ -371,6 +371,26 @@ export default function ROICalculator({ onLeadGate }: { onLeadGate?: (data: ROIR
                       accent={results.cashOnCashReturn > 0 ? 'text-green-600' : 'text-red-500'} />
                   </Section>
 
+                  {/* 2. Monthly Cash Flow */}
+                  <Section title="Monthly Cash Flow" icon="💰">
+                    <Metric label="Monthly Income" value={`+ ${fAED(results.monthlyGrossRent)}`} sub="Gross rental income" accent="text-green-600" />
+                    {results.mortgagePayment && (
+                      <Metric label="Mortgage Instalment" value={`− ${fAED(results.mortgagePayment)}`} sub="Monthly P&I repayment" accent="text-red-500" />
+                    )}
+                    {results.operatingExpenses.serviceCharge > 0 && (
+                      <Metric label="Service Charge" value={`− ${fAED(results.operatingExpenses.serviceCharge / 12)}`} sub="Annual charge ÷ 12" accent="text-red-500" />
+                    )}
+                    <div className="flex items-center justify-between pt-3 mt-1 border-t-2 border-surface-border">
+                      <div>
+                        <div className="text-sm font-bold text-ink">Monthly Remaining</div>
+                        <div className="text-xs text-ink-faint">{results.monthlyNetCashFlow >= 0 ? 'Positive — property cash flows' : 'Top-up required each month'}</div>
+                      </div>
+                      <div className={`text-lg font-black ${results.monthlyNetCashFlow >= 0 ? 'text-green-600' : 'text-red-500'}`}>
+                        {fAED(results.monthlyNetCashFlow)}
+                      </div>
+                    </div>
+                  </Section>
+
                   {/* 3. Mortgage Breakdown */}
                   {results.mortgageDetails && (
                     <Section title="Mortgage Breakdown" icon="🏦">
