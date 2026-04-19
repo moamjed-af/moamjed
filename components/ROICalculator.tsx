@@ -169,7 +169,6 @@ export default function ROICalculator({ onLeadGate }: { onLeadGate?: (data: ROIR
         downPaymentPercent:   v.downPaymentPercent,
         expectedMonthlyRent:  v.expectedAnnualRent / 12,
         appreciationPercent:  v.appreciationPercent,
-        managementFeePercent: 0,
         mortgageRate:         v.includeMortgage ? v.mortgageRate : 0,
         mortgageTerm:         25,
         includeCommission:    v.includeCommission,
