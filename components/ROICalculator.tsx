@@ -25,11 +25,6 @@ function fAED(n: number) {
 function fPct(n: number, decimals = 1) { return `${n.toFixed(decimals)}%` }
 function fNum(n: number) { return n.toLocaleString() }
 
-const SLIDERS = [
-  { key: 'downPaymentPercent',  min: 20,       max: 80,          step: 5,      label: 'Down Payment',            fmt: (v: number) => `${v}%` },
-  { key: 'appreciationPercent', min: 0,        max: 15,          step: 0.5,    label: 'Annual Capital Growth',   fmt: (v: number) => `${v}%` },
-] as const
-
 function MoneyInput({ label, value, onChange, placeholder, hint }: {
   label: string
   value: number
@@ -68,27 +63,33 @@ function MoneyInput({ label, value, onChange, placeholder, hint }: {
   )
 }
 
-function Slider({ cfg, value, onChange }: {
-  cfg: typeof SLIDERS[number]
+function PercentInput({ label, value, onChange, min, max, step, hint }: {
+  label: string
   value: number
   onChange: (v: number) => void
+  min?: number
+  max?: number
+  step?: number
+  hint?: string
 }) {
-  const pct = ((value - cfg.min) / (cfg.max - cfg.min)) * 100
   return (
     <div>
       <div className="flex justify-between items-center mb-2">
-        <label className="text-ink-muted text-sm font-medium">{cfg.label}</label>
-        <span className="text-ink font-bold">{cfg.fmt(value)}</span>
+        <label className="text-ink-muted text-sm font-medium">{label}</label>
+        <span className="text-ink font-bold">{value}%</span>
       </div>
-      <input
-        type="range" min={cfg.min} max={cfg.max} step={cfg.step} value={value}
-        onChange={e => onChange(parseFloat(e.target.value))}
-        className="w-full h-3 rounded-full appearance-none cursor-pointer touch-none"
-        style={{ background: `linear-gradient(to right,#7C3AED 0%,#123ba3 ${pct}%,#E5E7EB ${pct}%,#E5E7EB 100%)` }}
-      />
-      <div className="flex justify-between text-xs text-ink-faint mt-1">
-        <span>{cfg.fmt(cfg.min)}</span><span>{cfg.fmt(cfg.max)}</span>
+      <div className="relative">
+        <input
+          type="number" inputMode="decimal"
+          min={min} max={max} step={step ?? 0.1}
+          value={value || ''}
+          placeholder="0"
+          onChange={e => onChange(parseFloat(e.target.value) || 0)}
+          className="w-full border border-surface-border rounded-xl px-4 pr-10 py-2.5 text-sm text-ink bg-surface-alt outline-none focus:border-violet transition-colors"
+        />
+        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-ink-muted text-sm pointer-events-none">%</span>
       </div>
+      {hint && <p className="text-xs text-ink-faint mt-1">{hint}</p>}
     </div>
   )
 }
@@ -217,9 +218,21 @@ export default function ROICalculator({ onLeadGate }: { onLeadGate?: (data: ROIR
                 hint="Enter any property price"
               />
 
-              {SLIDERS.map(cfg => (
-                <Slider key={cfg.key} cfg={cfg} value={v[cfg.key] as number} onChange={val => setValue(cfg.key, val)} />
-              ))}
+              <PercentInput
+                label="Down Payment"
+                value={v.downPaymentPercent}
+                onChange={val => setValue('downPaymentPercent', val)}
+                min={5} max={100} step={1}
+                hint={v.propertyPrice > 0 ? `AED ${Math.round(v.propertyPrice * v.downPaymentPercent / 100).toLocaleString('en-US')} cash required` : undefined}
+              />
+
+              <PercentInput
+                label="Annual Capital Growth"
+                value={v.appreciationPercent}
+                onChange={val => setValue('appreciationPercent', val)}
+                min={0} max={30} step={0.5}
+                hint="Expected annual property appreciation"
+              />
 
               {/* Annual Rent */}
               <MoneyInput
@@ -278,17 +291,13 @@ export default function ROICalculator({ onLeadGate }: { onLeadGate?: (data: ROIR
                 {/* Mortgage */}
                 <Toggle label="Mortgage Financing" on={v.includeMortgage} onToggle={() => setValue('includeMortgage', !v.includeMortgage)} />
                 {v.includeMortgage && (
-                  <div className="pl-2">
-                    <div className="flex justify-between mb-2">
-                      <span className="text-ink-muted text-sm">Mortgage Rate</span>
-                      <span className="text-ink font-bold">{v.mortgageRate}%</span>
-                    </div>
-                    <input type="range" min={2} max={8} step={0.1} value={v.mortgageRate}
-                      onChange={e => setValue('mortgageRate', parseFloat(e.target.value))}
-                      className="w-full h-3 rounded-full appearance-none cursor-pointer touch-none"
-                      style={{ background: `linear-gradient(to right,#7C3AED 0%,#123ba3 ${((v.mortgageRate-2)/6)*100}%,#E5E7EB ${((v.mortgageRate-2)/6)*100}%,#E5E7EB 100%)` }}
-                    />
-                  </div>
+                  <PercentInput
+                    label="Mortgage Rate"
+                    value={v.mortgageRate}
+                    onChange={val => setValue('mortgageRate', val)}
+                    min={0.1} max={15} step={0.1}
+                    hint="Annual interest rate from your bank"
+                  />
                 )}
 
                 {/* Commission */}
