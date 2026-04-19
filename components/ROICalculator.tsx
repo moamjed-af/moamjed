@@ -20,9 +20,7 @@ type Inputs = {
 }
 
 function fAED(n: number) {
-  if (Math.abs(n) >= 1_000_000) return `AED ${(n / 1_000_000).toFixed(2)}M`
-  if (Math.abs(n) >= 1_000)     return `AED ${(n / 1_000).toFixed(0)}K`
-  return `AED ${Math.round(n).toLocaleString()}`
+  return `AED ${Math.round(n).toLocaleString('en-US')}`
 }
 function fPct(n: number, decimals = 1) { return `${n.toFixed(decimals)}%` }
 function fNum(n: number) { return n.toLocaleString() }
