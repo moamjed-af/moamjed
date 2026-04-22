@@ -4,10 +4,10 @@ import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 
 const steps = [
-  { step: '01', icon: '⚡', title: 'Calculate Your ROI', desc: 'Use our live calculator to input your budget and instantly see rental yield, cash flow, and projected returns. No sign-up needed.', color: 'violet' },
-  { step: '02', icon: '📋', title: 'Get Your Custom Report', desc: 'Share your goals with us. We match you to off-market properties that hit your exact ROI target — not just anything on the market.', color: 'brand' },
-  { step: '03', icon: '🤝', title: 'Connect with Mo', desc: 'High-priority investors get a direct strategy call. Others connect via WhatsApp. Either way, you get a response within 2 hours.', color: 'violet' },
-  { step: '04', icon: '🔑', title: 'Close with Precision', desc: 'Mo handles negotiations, developer relations, legal checks, and DLD registration. You sign, collect keys, and start earning.', color: 'brand' },
+  { step: '01', icon: '📞', title: 'Discovery Call', desc: 'A focused 20-minute strategy session to understand your investment goals, budget, and timeline — the foundation every recommendation is built on.', color: 'violet' },
+  { step: '02', icon: '🎯', title: 'Bespoke Strategy', desc: 'A curated shortlist of properties — including off-market opportunities — matched precisely to your yield targets, risk profile, and capital.', color: 'brand' },
+  { step: '03', icon: '🏙️', title: 'Validated Shortlist', desc: 'Every option is toured, stress-tested, and independently verified — DLD checks, developer vetting, and ROI analysis included — before it reaches you.', color: 'violet' },
+  { step: '04', icon: '🔑', title: 'End-to-End Execution', desc: 'Full-service closing: negotiations, legal checks, and DLD registration handled from start to finish. You sign, collect keys, and start earning.', color: 'brand' },
 ]
 
 export default function HowItWorks() {
@@ -22,14 +22,13 @@ export default function HowItWorks() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="text-center mb-16">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-brand/20 bg-blue-50 text-brand text-sm font-semibold mb-6">
-            <span>🗺️</span> How It Works
+            <span>📞</span> The Process
           </div>
           <h2 className="text-4xl sm:text-5xl font-black text-ink mb-4">
-            From Interest to{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-brand-violet">Income</span>
-            {' '}in 4 Steps
+            From First Call to{' '}
+            <span className="text-transparent bg-clip-text bg-gradient-brand-violet">First Cheque</span>
           </h2>
-          <p className="text-ink-muted text-lg max-w-2xl mx-auto">A precise, battle-tested process that has helped 500+ investors close with confidence.</p>
+          <p className="text-ink-muted text-lg max-w-2xl mx-auto">A fully managed investment service — from initial consultation to completed transaction, every step is handled on your behalf.</p>
         </motion.div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -60,10 +59,10 @@ export default function HowItWorks() {
         {/* CTA */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.6 }} className="text-center mt-12">
           <a
-            href="#calculator"
+            href="#contact"
             className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-brand-violet text-white rounded-2xl font-bold text-lg shadow-violet hover:shadow-violet-lg hover:-translate-y-0.5 transition-all duration-300"
           >
-            Start with the Calculator
+            Book Your Discovery Call
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
           </a>
         </motion.div>

@@ -8,7 +8,6 @@ import StatsBar from '@/components/StatsBar'
 import HowItWorks from '@/components/HowItWorks'
 import ROICalculator from '@/components/ROICalculator'
 import LeadCaptureSection from '@/components/LeadCaptureSection'
-import Properties from '@/components/Properties'
 import TrustSection from '@/components/TrustSection'
 import BookCall from '@/components/BookCall'
 import WhatsAppButton from '@/components/WhatsAppButton'
@@ -52,9 +51,6 @@ export default function HomePage() {
 
         {/* 5. Lead Capture */}
         <LeadCaptureSection />
-
-        {/* 6. Featured Properties */}
-        <Properties />
 
         {/* 7. Testimonials */}
         <TrustSection />

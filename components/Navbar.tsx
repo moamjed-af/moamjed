@@ -16,7 +16,6 @@ export default function Navbar() {
   }, [])
 
   const navLinks = [
-    { label: 'Properties', href: '#properties' },
     { label: 'ROI Calculator', href: '#calculator' },
     { label: 'Testimonials', href: '#trust' },
     { label: 'Book a Call', href: '#book-call' },
